@@ -1,8 +1,8 @@
 import { BaseEntity, Column, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn, Unique } from 'typeorm';
-import { Gender } from '../../commons/enums/gender.enum';
+import { Gender } from '../../commons/enums/index.Enum';
 import { User } from '../auth/entities/user.entity';
 import { Favorite } from '../favorite/favorite.entity';
-import { IsDefined, IsEmail, IsBoolean, IsString, IsNumber, IsOptional, IsEnum } from 'class-validator';
+import { IsDefined, IsString, IsNumber, IsOptional } from 'class-validator';
 
 @Entity('profiles')
 @Unique(['phone'])

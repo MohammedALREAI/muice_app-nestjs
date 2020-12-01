@@ -3,7 +3,7 @@ import {
   BeforeUpdate, BeforeInsert
 } from 'typeorm';
 
-import { Role } from '../../../commons/enums/role.enum';
+import { Role } from '../../../commons/enums/index.Enum';
 import * as bcrypt from 'bcryptjs';
 import { Profile } from '../../profile/profile.entity';
 import { Playlist } from '../../playlist/playlist.entity';
@@ -132,6 +132,32 @@ export class User extends BaseEntity {
     }
   }
 
+
+  // handle to check email is valid
+
+  async isValidEmail(email: string): Promise<boolean> {
+    const pattern = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    return pattern.test(email);
+
+  }
+
+  @BeforeInsert()
+  @BeforeUpdate()
+  async isEmail(email: string): Promise<void> {
+    const pattern = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    if (pattern.test(email)) {
+      this.email = email
+    }
+    else{
+      throw new Error("the email not Match pattern")
+    }
+
+  }
+
+
+
+
+
   async comparePassword(hashPassword: string): Promise<boolean> {
     if (hashPassword) {
       return await bcrypt.compare(hashPassword, this.password);
@@ -139,6 +165,7 @@ export class User extends BaseEntity {
     return false
 
   }
+
 
 
 

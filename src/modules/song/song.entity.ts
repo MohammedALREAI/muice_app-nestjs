@@ -1,13 +1,13 @@
 import { Column, Entity, ManyToOne, OneToMany, Unique } from 'typeorm';
 import { AbstractMusic } from '../../commons/classes/abstract-music';
-import { SongType } from '../../commons/enums/song-type.enum';
-import { SongLanguage } from '../../commons/enums/song-language.enum';
-import { SingerAlbum } from '../singer-album/singer-album.entity';
+
 import { Track } from '../track/track.entity';
+import { SongType, SongLanguage } from '../../commons/enums/index.Enum';
+import { SingerAlbum } from '../singer-album/singer-album.entity';
 
 @Entity('songs')
 @Unique(['name', 'source'])
-export class Song extends AbstractMusic{
+export class Song extends AbstractMusic {
 
   @Column({
     type: 'enum',

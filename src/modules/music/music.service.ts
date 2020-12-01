@@ -2,7 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { MusicRepository } from './music.repository';
 import { Music } from './music.entity';
-import { MusicType } from '../../commons/enums/music-type.enum';
+import { MusicType } from '../../commons/enums/index.Enum';
 import { DeleteResult } from 'typeorm';
 import { AwsService } from '../../shared/modules/aws/aws.service';
 import { FavoriteService } from '../favorite/favorite.service';
@@ -24,7 +24,7 @@ export class MusicService {
       const musics = await this.musicRepository.find();
       if (musics.length > 0) {
         return musics
-}
+      }
       throw new NotFoundException('there is no musics')
 
 

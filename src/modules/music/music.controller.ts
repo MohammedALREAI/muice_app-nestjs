@@ -3,7 +3,7 @@ import {
   Controller,
   Delete,
   Get,
-  Param, ParseArrayPipe,
+  Param,
   Post,
   Put,
   Query,
@@ -11,16 +11,14 @@ import {
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
-import { MusicType } from '../../commons/enums/music-type.enum';
+import { MusicType, Role } from '../../commons/enums/index.Enum';
 import { MusicService } from './music.service';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { AuthGuard } from '@nestjs/passport';
 import { UserAuthGuard } from '../../commons/guards/user-auth.guard';
 import { Roles } from '../../commons/decorators/roles.decorator';
-import { Role } from '../../commons/enums/role.enum';
 import { AdminAuthGuard } from '../../commons/guards/admin-auth.guard';
 import { UpdateMusicDto } from './dto/updateMusic';
-import { HttpStatus } from '@nestjs/common';
 import { ParseIntPipeValidationPipe } from '../../commons/Pipes/parseintpipevalidation.pipe';
 
 @Controller('musics')

@@ -6,15 +6,13 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { AuthCredentialsDto } from './dto/auth-credentials.dto';
 import { CreateProfileDto } from './dto/create-profile.dto';
 import { User } from './entities/user.entity';
-import * as bcrypt from 'bcryptjs';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserRepository } from './repositories/user.repository';
 import { Profile } from '../profile/profile.entity';
 import { Favorite } from '../favorite/favorite.entity';
-import { Role } from '../../commons/enums/role.enum';
+import { Role } from '../../commons/enums/index.Enum';
 import { EmailVerification } from './entities/email-verification.entity';
 import { Repository } from 'typeorm';
 import { Nodemailer, NodemailerDrivers } from '@crowdlinker/nestjs-mailer';
@@ -30,6 +28,7 @@ import { PlaylistService } from '../playlist/playlist.service';
 import { ChatService } from '../../shared/modules/chat/chat.service';
 import { NotificationService } from '../notification/notification.service';
 import { SignUpBody } from './auth.controller';
+import { template } from '../../utils/Mail';
 
 @Injectable()
 export class AuthService {
@@ -72,7 +71,8 @@ export class AuthService {
       city,
       address,
     }
-    if (!this.isValidEmail(email)) {
+    const isValid = this.userRepository.isValidEmail(email)
+    if (!isValid) {
       throw new BadRequestException('You have entered invalid email');
     }
     const user = new User();
@@ -157,7 +157,9 @@ export class AuthService {
   }
 
   async signInUser(emailLoginDto: EmailLoginDto): Promise<{ token: string }> {
-    if (!(await this.isValidEmail(emailLoginDto.email))) {
+    const isValid = this.userRepository.isValidEmail(emailLoginDto.email)
+
+    if (!isValid) {
       throw new BadRequestException('Invalid Email Signature');
     }
     const { email, user } = await this.userRepository.validateUserPassword(emailLoginDto);
@@ -188,7 +190,7 @@ export class AuthService {
     const profile2 = await Profile.create({
       ...createProfileDto,
       user,
-      favorite: await this.createFavoriteList(this)
+      favorite: await this.createFavoriteList(profile)
     }).save();
 
     return await profile.save();
@@ -234,15 +236,8 @@ export class AuthService {
     if (verifiedEmail && verifiedEmail.emailToken) {
       const url = `<a style='text-decoration:none;'
     href= http://${config.frontEndKeys.url}:${config.frontEndKeys.port}/${config.frontEndKeys.endpoints[1]}/${verifiedEmail.emailToken}>Click Here to confirm your email</a>`;
-      await this.nodeMailerService.sendMail({
-        from: '"Company" <' + config.nodeMailerOptions.transport.auth.username + '>',
-        to: config.nodeMailerOptions.transport.auth.username,
-        subject: 'Verify Email',
-        text: 'Verify Email',
-        html: `<h1>Hi User</h1> <br><br> <h2>Thanks for your registration</h2>
-<h3>Please Verify Your Email by clicking the following link</h3><br><br>
-        ${url}`,
-      }).then(info => {
+      const op = template.VerifyEmail(config.nodeMailerOptions.transport.auth.username, config.nodeMailerOptions.transport.auth.username, url)
+      await this.nodeMailerService.sendMail(op).then(info => {
         console.log('Message sent: %s', info.messageId);
       }).catch(err => {
         console.log('Message sent: %s', err);
@@ -268,13 +263,7 @@ export class AuthService {
   }
 
 
-  isValidEmail(email: string) {
-    if (email) {
-      const pattern = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-      return pattern.test(email);
-    } else
-      return false;
-  }
+
 
 
   async sendEmailForgottenPassword(email: string): Promise<any> {
@@ -286,15 +275,8 @@ export class AuthService {
     if (tokenModel && tokenModel.newPasswordToken) {
       const url = `<a style='text-decoration:none;'
     href= http://${config.frontEndKeys.url}:${config.frontEndKeys.port}/${config.frontEndKeys.endpoints[0]}/${tokenModel.newPasswordToken}>Click here to reset your password</a>`;
-      return await this.nodeMailerService.sendMail({
-        from: '"Company" <' + config.nodeMailerOptions.transport.auth.username + '>',
-        to: email,
-        subject: 'Reset Your Password',
-        text: 'Reset Your Password',
-        html: `<h1>Hi User</h1> <br><br> <h2>You have requested to reset your password , please click the following link to change your password</h2>
-     <h3>Please click the following link</h3><br><br>
-        ${url}`,
-      }).then(info => {
+      const op = template.ResetPassword(config.nodeMailerOptions.transport.auth.username, email, url)
+      return await this.nodeMailerService.sendMail(op).then(info => {
         console.log('Message sent: %s', info.messageId);
       }).catch(err => {
         console.log('Message sent: %s', err);
@@ -320,7 +302,7 @@ export class AuthService {
     if (!user) {
       throw new HttpException('User Does not Found', HttpStatus.NOT_FOUND);
     }
-    return await bcrypt.compare(password, user.password);
+    return await this.userRepository.comparePassword(password);
   }
 
   async setNewPassword(resetPasswordDto: ResetPasswordDto) {
@@ -356,7 +338,9 @@ export class AuthService {
   }
 
   async signInAdmin(emailLoginDto: EmailLoginDto): Promise<{ accessToken: string, user: User }> {
-    if (!(await this.isValidEmail(emailLoginDto.email))) {
+    const isValid = this.userRepository.isValidEmail(emailLoginDto.email)
+
+    if (!isValid) {
       throw new BadRequestException('Invalid Email Signature');
     }
     const { email, user } = await this.userRepository.validateAdminPassword(emailLoginDto);

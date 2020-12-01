@@ -1,8 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { AwsService } from '../../shared/modules/aws/aws.service';
-import { ArtistType } from '../../commons/enums/artist-type.enum';
-import { Gender } from '../../commons/enums/gender.enum';
+import { ArtistType, Gender } from '../../commons/enums/index.Enum';
 import { DeleteResult } from 'typeorm';
 import { CreateAlbumDto } from '../../shared/dto/create-album.dto';
 import { MusicianRepository } from './musician.repository';
@@ -13,8 +12,8 @@ import { MusicianAlbumService } from '../musician-album/musician-album.service';
 @Injectable()
 export class MusicianService {
   constructor(@InjectRepository(MusicianRepository) private musicianRepository: MusicianRepository,
-              private awsService: AwsService,
-              private musicianAlbumService: MusicianAlbumService) {
+    private awsService: AwsService,
+    private musicianAlbumService: MusicianAlbumService) {
   }
 
   async getAllMusicians(): Promise<Musician[]> {
@@ -26,7 +25,7 @@ export class MusicianService {
   }
 
   async getFilteredMusicians(limit: number, nationality: string, type: ArtistType,
-                           gender: Gender): Promise<Musician[]> {
+    gender: Gender): Promise<Musician[]> {
     return await this.musicianRepository.getFilteredMusicians(limit, nationality, type, gender);
   }
 
@@ -41,8 +40,8 @@ export class MusicianService {
   }
 
   async createNewMusician(name: string, info: string, gender: Gender, type: ArtistType,
-                        nationality: string,
-                        image: any): Promise<Musician> {
+    nationality: string,
+    image: any): Promise<Musician> {
     const musician = new Musician();
     musician.name = name;
     musician.info = info;
@@ -56,7 +55,7 @@ export class MusicianService {
   }
 
   async updateMusician(id: number, name: string, info: string, gender: Gender, nationality: string,
-                     type: ArtistType, image: any): Promise<Musician> {
+    type: ArtistType, image: any): Promise<Musician> {
     const musician = await this.getMusicianById(id);
     if (name) {
       musician.name = name;
@@ -83,7 +82,7 @@ export class MusicianService {
 
   async deleteMusician(musicianId: number): Promise<DeleteResult> {
     const musician = await this.getMusicianById(musicianId);
-    if(musician.image){
+    if (musician.image) {
       await this.awsService.fileDelete(musician.image);
     }
     for (let i = 0; i < musician.musicianAlbums.length; i++) {

@@ -1,5 +1,5 @@
 import { IsDefined, IsString, IsNumber } from 'class-validator';
-import { Gender } from '../../../commons/enums/gender.enum';
+import { Gender } from '../../../commons/enums/index.Enum';
 
 export class CreateProfileDto {
   @IsString()

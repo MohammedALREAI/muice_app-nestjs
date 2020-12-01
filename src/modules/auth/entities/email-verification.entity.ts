@@ -1,5 +1,5 @@
 import { Column, Entity, Unique } from 'typeorm';
-import { Shared } from '../../../commons/classes/shared.entity';
+import { Shared } from '../../../commons/classes/abstract-shared';
 
 @Entity('verified-emails')
 @Unique(['email', 'emailToken'])

@@ -11,15 +11,13 @@ import {
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
-import { ArtistType } from '../../commons/enums/artist-type.enum';
-import { Gender } from '../../commons/enums/gender.enum';
+import { ArtistType, Gender, Role } from '../../commons/enums/index.Enum';
 import { CreateAlbumDto } from '../../shared/dto/create-album.dto';
 import { MusicianService } from './musician.service';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { AuthGuard } from '@nestjs/passport';
 import { AdminAuthGuard } from '../../commons/guards/admin-auth.guard';
 import { Roles } from '../../commons/decorators/roles.decorator';
-import { Role } from '../../commons/enums/role.enum';
 import { ParseIntPipeValidationPipe } from '../../commons/Pipes/parseintpipevalidation.pipe';
 
 

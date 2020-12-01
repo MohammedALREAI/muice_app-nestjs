@@ -1,5 +1,6 @@
 import { IsDefined, IsString } from 'class-validator';
-import { MusicType } from '../../../commons/enums/music-type.enum';
+import { MusicType } from '../../../commons/enums/index.Enum';
+
 export class UpdateMusicDto {
   @IsString()
   @IsDefined()

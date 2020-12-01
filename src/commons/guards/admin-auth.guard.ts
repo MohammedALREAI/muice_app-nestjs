@@ -1,9 +1,9 @@
 import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common';
 import { Observable } from 'rxjs';
 import { Reflector } from '@nestjs/core';
-import { Role } from '../enums/role.enum';
+import { Role } from '../enums/index.Enum';
 import { User } from '../../modules/auth/entities/user.entity';
-
+import{Request} from'express'
 @Injectable()
 export class AdminAuthGuard implements CanActivate {
   constructor(private readonly reflector: Reflector) {

@@ -1,5 +1,4 @@
-import { SongType } from '../../../commons/enums/song-type.enum';
-import { SongLanguage } from '../../../commons/enums/song-language.enum';
+import { SongType, SongLanguage } from '../../../commons/enums/index.Enum';
 export class GetFilteredSongDto {
   limit: number
   type: SongType

@@ -1,7 +1,6 @@
 import { EntityRepository, Repository } from 'typeorm';
-import { ArtistType } from '../../commons/enums/artist-type.enum';
-import { Gender } from '../../commons/enums/gender.enum';
 import { Musician } from './musician.entity';
+import { Gender, ArtistType } from '../../commons/enums/index.Enum';
 
 
 @EntityRepository(Musician)

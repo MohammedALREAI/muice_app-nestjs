@@ -19,9 +19,9 @@ import { User } from '../auth/entities/user.entity';
 import { AuthGuard } from '@nestjs/passport';
 import { AcceptedAuthGuard } from '../../commons/guards/accepted-auth.guard';
 import { Roles } from '../../commons/decorators/roles.decorator';
-import { Role } from '../../commons/enums/role.enum';
 import { ProfileService } from './profile.service';
 import { Response } from 'express'
+import { Role } from '../../commons/enums/index.Enum';
 
 @UseGuards(AuthGuard(), AcceptedAuthGuard)
 @Roles([Role.ADMIN, Role.USER])

@@ -16,7 +16,7 @@ import { AuthService } from './auth.service';
 import { EmailLoginDto } from './dto/email-login.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { Roles } from '../../commons/decorators/roles.decorator';
-import { Role } from '../../commons/enums/role.enum';
+import { Role } from '../../commons/enums/index.Enum';
 import { AcceptedAuthGuard } from '../../commons/guards/accepted-auth.guard';
 import { ResetPasswordDto } from './dto/reset-password.dto';
 import { GetAuthenticatedUser } from '../../commons/decorators/get-authenticated-user.decorator';
@@ -24,7 +24,7 @@ import { User } from './entities/user.entity';
 import { AdminAuthGuard } from '../../commons/guards/admin-auth.guard';
 import { UserAuthGuard } from '../../commons/guards/user-auth.guard';
 import { ParseIntPipeValidationPipe } from '../../commons/Pipes/parseintpipevalidation.pipe';
-type SignUpBody = AuthCredentialsDto & CreateProfileDto
+export type SignUpBody = AuthCredentialsDto & CreateProfileDto
 
 
 @Controller('auth')
@@ -55,9 +55,9 @@ export class AuthController {
 
   @Get('google')
   @UseGuards(AuthGuard('google'))
-  googleLogin() {
+  // googleLogin() {
 
-  }
+  // }
 
   // related to callback --> redirection to frontend
   @Get('google/callback')
@@ -75,9 +75,9 @@ export class AuthController {
 
   @Get('facebook')
   @UseGuards(AuthGuard('facebook'))
-  facebookLogin() {
+  // facebookLogin() {
 
-  }
+  // }
 
   // related to callback --> redirection to frontend
   @Get('facebook/callback')

@@ -1,7 +1,6 @@
 import { EntityRepository, Repository, DeleteResult } from 'typeorm';
 import { Singer } from './singer.entity';
-import { ArtistType } from '../../commons/enums/artist-type.enum';
-import { Gender } from '../../commons/enums/gender.enum';
+import { ArtistType, Gender } from '../../commons/enums/index.Enum';
 import { CreateNewSingerDto } from './dto/createNewSingerDto';
 import { AwsService } from '../../shared/modules/aws/aws.service';
 import { BadRequestException, NotFoundException } from '@nestjs/common';

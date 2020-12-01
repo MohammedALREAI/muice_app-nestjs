@@ -1,7 +1,7 @@
 import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { AdminAuthGuard } from '../../commons/guards/admin-auth.guard';
-import { Role } from '../../commons/enums/role.enum';
+import { Role } from '../../commons/enums/index.Enum';
 import { Roles } from '../../commons/decorators/roles.decorator';
 import { AcceptedAuthGuard } from '../../commons/guards/accepted-auth.guard';
 import { GetAuthenticatedUser } from '../../commons/decorators/get-authenticated-user.decorator';

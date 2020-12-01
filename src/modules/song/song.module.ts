@@ -6,14 +6,14 @@ import { SongService } from './song.service';
 import { AwsModule } from '../../shared/modules/aws/aws.module';
 import { FavoriteModule } from '../favorite/favorite.module';
 import { PassportModule } from '@nestjs/passport';
-import { AuthConstants } from '../../commons/constants/auth-constants';
 import { PlaylistModule } from '../playlist/playlist.module';
 import { TrackModule } from '../track/track.module';
+import { config } from '../../config';
 
 @Module({
   imports: [TypeOrmModule.forFeature([SongRepository]),
     AwsModule, FavoriteModule, PassportModule.register({
-      defaultStrategy: AuthConstants.strategies,
+      defaultStrategy: config.AuthJwt.strategies,
     }), PlaylistModule, TrackModule],
   controllers: [SongController],
   providers: [SongService],

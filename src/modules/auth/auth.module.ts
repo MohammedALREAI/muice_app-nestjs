@@ -3,7 +3,6 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserRepository } from './repositories/user.repository';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
-import { AuthConstants } from '../../commons/constants/auth-constants';
 import { EmailVerification } from './entities/email-verification.entity';
 import { JwtStrategy } from './stratigies/jwt-strategy';
 import { AuthService } from './auth.service';
@@ -16,6 +15,7 @@ import { ChatModule } from '../../shared/modules/chat/chat.module';
 import { NotificationModule } from '../notification/notification.module';
 import { GoogleStrategy } from './stratigies/google.strategy';
 import { FacebookStrategy } from './stratigies/facebook.strategy';
+import { config } from '../../config';
 
 @Module({
   imports: [
@@ -23,9 +23,9 @@ import { FacebookStrategy } from './stratigies/facebook.strategy';
       defaultStrategy: 'jwt',
     }),
     JwtModule.register({
-      secret: AuthConstants.secretKey,
+      secret: config.AuthJwt.secretKey,
       signOptions: {
-        expiresIn: AuthConstants.expiresIn,
+        expiresIn: config.AuthJwt.expiresIn,
       },
     }),
     TypeOrmModule.forFeature([UserRepository, EmailVerification, ForgottenPassword]),

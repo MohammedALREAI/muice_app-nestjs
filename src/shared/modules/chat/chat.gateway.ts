@@ -10,7 +10,7 @@ import { Room } from './entities/room.entity';
 import { Repository } from 'typeorm';
 import { Message } from './entities/message.entity';
 import { UserJoinedRoom } from './entities/user-joined-room.entity';
-import { forwardRef, Inject, NotFoundException } from '@nestjs/common';
+import { forwardRef, Inject } from '@nestjs/common';
 import { AuthService } from '../../../modules/auth/auth.service';
 import { Socket } from 'socket.io';
 import { User } from '../../../modules/auth/entities/user.entity';
@@ -21,9 +21,9 @@ import { ChatService } from './chat.service';
 export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   constructor(private chatService: ChatService,
-              @Inject(forwardRef(() => AuthService)) private authService: AuthService,
-              @InjectRepository(Message) private readonly messageRepository: Repository<Message>,
-              @InjectRepository(Room) private readonly roomRepository: Repository<Room>) {
+    @Inject(forwardRef(() => AuthService)) private authService: AuthService,
+    @InjectRepository(Message) private readonly messageRepository: Repository<Message>,
+    @InjectRepository(Room) private readonly roomRepository: Repository<Room>) {
   }
 
 
@@ -58,8 +58,8 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     // Notify when the user disconnected and has leaved
     if (client && client.id) {
       const user = await this.authService.findUser(null, null, client.id);
-      if(user){
-      client.server.emit('users-changed', { user: user.username, event: 'left' });
+      if (user) {
+        client.server.emit('users-changed', { user: user.username, event: 'left' });
       }
     }
 
@@ -76,7 +76,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     let userJoinedRoom: UserJoinedRoom;
 
     // this function is used to determine if the user has joined this room or not
-    let isUserJoined = () =>
+    const isUserJoined = () =>
       user.userJoinedRooms.some(userJoinedRoom => userJoinedRoom.roomId === roomId);
 
 

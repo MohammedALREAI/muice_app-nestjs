@@ -1,7 +1,7 @@
-import { CanActivate, ExecutionContext,  Injectable } from '@nestjs/common';
+import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { Observable } from 'rxjs';
 import { Reflector } from '@nestjs/core';
-import { Role } from '../enums/role.enum';
+import { Role } from '../enums/index.Enum';
 import { User } from '../../modules/auth/entities/user.entity';
 import { Request } from 'express'
 
@@ -32,4 +32,4 @@ export class AcceptedAuthGuard implements CanActivate {
 
 
 
-// some hint with use gurad it should be used CAN aCTIVE 
+// some hint with use gurad it should be used CAN aCTIVE

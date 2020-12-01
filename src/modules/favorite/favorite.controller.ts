@@ -1,8 +1,8 @@
-import { Controller, Delete, Get, HttpStatus, Param, UseGuards } from '@nestjs/common';
+import { Controller, Delete, Get, Param, UseGuards } from '@nestjs/common';
 import { FavoriteService } from './favorite.service';
 import { AuthGuard } from '@nestjs/passport';
 import { Roles } from '../../commons/decorators/roles.decorator';
-import { Role } from '../../commons/enums/role.enum';
+import { Role } from '../../commons/enums/index.Enum';
 import { UserAuthGuard } from '../../commons/guards/user-auth.guard';
 import { ParseIntPipeValidationPipe } from '../../commons/Pipes/parseintpipevalidation.pipe';
 
@@ -15,7 +15,7 @@ export class FavoriteController {
   }
 
   @Get(':id')
-  getUserFavoriteList(@Param('id', new new ParseIntPipeValidationPipe()({ errorHttpStatusCode: HttpStatus.NOT_ACCEPTABLE })) id: number) {
+  getUserFavoriteList(@Param('id', new ParseIntPipeValidationPipe()) id: number) {
     return this.favoriteListService.getUserFavoriteList(id);
   }
 

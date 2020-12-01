@@ -1,8 +1,8 @@
 {
-  "name": "music-land-api",
-  "version": "0.0.1",
-  "description": "This is the official API of Music Land Application",
-  "author": "Mohammad Qaderi",
+  "name": "music_Api",
+  "version": "0.1.0",
+  "description": "nestjs with typeorm and the docker  to handle with music",
+  "author": "Mohammed Alreai",
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
@@ -104,5 +104,7 @@
     },
     "coverageDirectory": "../coverage",
     "testEnvironment": "node"
-  }
+  },
+  "main": "main.js",
+  "repository": "https://github.com/MohammedALREAI/muice_app-nestjs.git"
 }

@@ -1,4 +1,4 @@
-import { Role } from '../enums/role.enum';
+import { Role } from '../enums/index.Enum';
 import { SetMetadata } from '@nestjs/common';
 
 

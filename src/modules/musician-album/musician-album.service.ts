@@ -4,16 +4,16 @@ import { DeleteResult, Repository } from 'typeorm';
 import { AwsService } from '../../shared/modules/aws/aws.service';
 import { CreateAlbumDto } from '../../shared/dto/create-album.dto';
 import { MusicianAlbum } from './musician-album.entity';
-import { MusicType } from '../../commons/enums/music-type.enum';
 import { Music } from '../music/music.entity';
 import { MusicService } from '../music/music.service';
+import { MusicType } from '../../commons/enums/index.Enum';
 
 @Injectable()
 export class MusicianAlbumService {
 
   constructor(@InjectRepository(MusicianAlbum) private musicianAlbumRepository: Repository<MusicianAlbum>,
-              private awsService: AwsService,
-              private musicService: MusicService) {
+    private awsService: AwsService,
+    private musicService: MusicService) {
   }
 
   async getAllMusicianAlbums(): Promise<MusicianAlbum[]> {
@@ -33,10 +33,10 @@ export class MusicianAlbumService {
   }
 
   async createNewMusic(musicianAlbumId: number, name: string,
-                      description: string,
-                      artist: string,
-                      type: MusicType,
-                      source: any,
+    description: string,
+    artist: string,
+    type: MusicType,
+    source: any,
   ): Promise<Music> {
     const music = new Music();
     const musicianAlbum = await this.getMusicianAlbumById(musicianAlbumId);
@@ -61,7 +61,7 @@ export class MusicianAlbumService {
     return savedMusicianAlbum;
   }
 
-  async deleteMusicianAlbum(id: number): Promise<DeleteResult>{
+  async deleteMusicianAlbum(id: number): Promise<DeleteResult> {
     const musicianAlbum = await this.getMusicianAlbumById(id);
     for (let i = 0; i < musicianAlbum.musics.length; i++) {
       await this.musicService.deleteMusic(musicianAlbum.musics[i].id);

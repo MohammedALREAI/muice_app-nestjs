@@ -1,5 +1,4 @@
-import { Gender } from '../../../commons/enums/gender.enum';
-import { ArtistType } from '../../../commons/enums/artist-type.enum';
+import { ArtistType, Gender } from '../../../commons/enums/index.Enum';
 export class UpdateSingerDto {
   id: number
   name: string

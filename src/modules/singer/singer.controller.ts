@@ -11,19 +11,17 @@ import {
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
-import { ArtistType } from '../../commons/enums/artist-type.enum';
-import { Gender } from '../../commons/enums/gender.enum';
+import { ArtistType, Gender, Role } from '../../commons/enums/index.Enum';
 import { CreateAlbumDto } from '../../shared/dto/create-album.dto';
 import { SingerService } from './singer.service';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { AuthGuard } from '@nestjs/passport';
 import { AdminAuthGuard } from '../../commons/guards/admin-auth.guard';
 import { Roles } from '../../commons/decorators/roles.decorator';
-import { Role } from '../../commons/enums/role.enum';
 import { CreateNewSingerDto } from './dto/createNewSingerDto';
 import { UpdateSingerDto } from './dto/UpdateSingerDto';
 import { GetFilteredSingers } from './dto/getFilteredSingersDto';
-import { storageName, editFile } from '../../commons/helpers/handling-files.helper';
+import { editFile } from '../../commons/helpers/handling-files.helper';
 import { diskStorage } from 'multer';
 import { ParseIntPipeValidationPipe } from '../../commons/Pipes/parseintpipevalidation.pipe';
 @Controller('singers')

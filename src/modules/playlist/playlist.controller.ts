@@ -4,7 +4,7 @@ import { User } from '../auth/entities/user.entity';
 import { AuthGuard } from '@nestjs/passport';
 import { UserAuthGuard } from '../../commons/guards/user-auth.guard';
 import { Roles } from '../../commons/decorators/roles.decorator';
-import { Role } from '../../commons/enums/role.enum';
+import { Role } from '../../commons/enums/index.Enum';
 import { PlaylistDto } from './dto/playlist.dto';
 import { PlaylistService } from './playlist.service';
 import { ParseIntPipeValidationPipe } from '../../commons/Pipes/parseintpipevalidation.pipe';

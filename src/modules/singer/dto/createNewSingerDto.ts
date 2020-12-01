@@ -1,6 +1,5 @@
 import { IsString, IsDefined } from 'class-validator';
-import { Gender } from '../../../commons/enums/gender.enum';
-import { ArtistType } from '../../../commons/enums/artist-type.enum';
+import { Gender, ArtistType } from '../../../commons/enums/index.Enum';
 export class CreateNewSingerDto {
   @IsString()
   @IsDefined()

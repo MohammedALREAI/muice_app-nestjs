@@ -1,9 +1,7 @@
-import { Injectable, NotFoundException, InternalServerErrorException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { SongRepository } from './song.repository';
 import { Song } from './song.entity';
-import { SongType } from '../../commons/enums/song-type.enum';
-import { SongLanguage } from '../../commons/enums/song-language.enum';
 import { AwsService } from '../../shared/modules/aws/aws.service';
 import { DeleteResult } from 'typeorm';
 import { FavoriteService } from '../favorite/favorite.service';

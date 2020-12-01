@@ -12,13 +12,11 @@ import {
 } from '@nestjs/common';
 import { CreateAlbumDto } from '../../shared/dto/create-album.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { SongType } from '../../commons/enums/song-type.enum';
-import { SongLanguage } from '../../commons/enums/song-language.enum';
+import { SongType, SongLanguage, Role } from '../../commons/enums/index.Enum';
 import { SingerAlbumService } from './singer-album.service';
 import { AuthGuard } from '@nestjs/passport';
 import { AdminAuthGuard } from '../../commons/guards/admin-auth.guard';
 import { Roles } from '../../commons/decorators/roles.decorator';
-import { Role } from '../../commons/enums/role.enum';
 import { CreateNewSongDto } from './dto/createNewSongDto';
 import { ParseIntPipeValidationPipe } from '../../commons/Pipes/parseintpipevalidation.pipe';
 type BodyCreateNewSong = Omit<CreateNewSongDto, 'source' | 'singerAlbumId'>

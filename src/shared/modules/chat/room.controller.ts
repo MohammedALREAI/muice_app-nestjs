@@ -12,7 +12,7 @@ import {
 import { AuthGuard } from '@nestjs/passport';
 import { UserAuthGuard } from '../../../commons/guards/user-auth.guard';
 import { Roles } from '../../../commons/decorators/roles.decorator';
-import { Role } from '../../../commons/enums/role.enum';
+import { Role } from '../../../commons/enums/index.Enum';
 import { GetAuthenticatedUser } from '../../../commons/decorators/get-authenticated-user.decorator';
 import { User } from '../../../modules/auth/entities/user.entity';
 import { RoomDto } from './dto/room.dto';
@@ -45,13 +45,13 @@ export class RoomController {
 
   @Post()
   createNewRoom(@GetAuthenticatedUser() user: User,
-                @Body() createRoomDto: RoomDto) {
+    @Body() createRoomDto: RoomDto) {
     return this.chatService.createNewRoom(user, createRoomDto);
   }
 
   @Put(':id/edit-room')
   updateRoom(@Param('id', new ParseIntPipeValidationPipe()) id: number,
-             @Body() updateRoomDto: RoomDto) {
+    @Body() updateRoomDto: RoomDto) {
     return this.chatService.updateRoom(id, updateRoomDto);
   }
 

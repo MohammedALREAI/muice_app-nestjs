@@ -3,6 +3,11 @@ import { Message } from './message.entity';
 import { UserJoinedRoom } from './user-joined-room.entity';
 
 
+
+// relation between  Room
+// messages: Message[];
+// userJoinedRooms: UserJoinedRoom[];
+
 @Entity('rooms')
 export class Room extends BaseEntity {
   @PrimaryGeneratedColumn()
@@ -25,7 +30,7 @@ export class Room extends BaseEntity {
   messages: Message[];
 
   @OneToMany(type => UserJoinedRoom,
-      userJoinedRoom => userJoinedRoom.room, {
+    userJoinedRoom => userJoinedRoom.room, {
     eager: true
   })
   userJoinedRooms: UserJoinedRoom[];

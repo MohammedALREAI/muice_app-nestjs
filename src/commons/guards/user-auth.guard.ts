@@ -1,9 +1,8 @@
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { Observable } from 'rxjs';
 import { Reflector } from '@nestjs/core';
-import { Role } from '../enums/role.enum';
+import { Role } from '../enums/index.Enum';
 import { User } from '../../modules/auth/entities/user.entity';
-import * as request from 'supertest';
 import { Request } from 'express'
 @Injectable()
 export class UserAuthGuard implements CanActivate {

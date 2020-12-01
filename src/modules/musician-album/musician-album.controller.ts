@@ -13,11 +13,10 @@ import {
 import { CreateAlbumDto } from '../../shared/dto/create-album.dto';
 import { MusicianAlbumService } from './musician-album.service';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { MusicType } from '../../commons/enums/music-type.enum';
+import { MusicType, Role } from '../../commons/enums/index.Enum';
 import { AuthGuard } from '@nestjs/passport';
 import { AdminAuthGuard } from '../../commons/guards/admin-auth.guard';
 import { Roles } from '../../commons/decorators/roles.decorator';
-import { Role } from '../../commons/enums/role.enum';
 import { ParseIntPipeValidationPipe } from '../../commons/Pipes/parseintpipevalidation.pipe';
 
 @Controller('musicians-albums')

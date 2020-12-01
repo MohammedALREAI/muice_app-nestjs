@@ -12,18 +12,16 @@ import {
   UseInterceptors,
 
 } from '@nestjs/common';
-import { SongLanguage } from '../../commons/enums/song-language.enum';
-import { SongType } from '../../commons/enums/song-type.enum';
 import { SongService } from './song.service';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { AuthGuard } from '@nestjs/passport';
 import { UserAuthGuard } from '../../commons/guards/user-auth.guard';
 import { Roles } from '../../commons/decorators/roles.decorator';
-import { Role } from '../../commons/enums/role.enum';
 import { AdminAuthGuard } from '../../commons/guards/admin-auth.guard';
 import { updateSongType, UpdateSongDto } from './dto/updateSongDto';
 import { GetFilteredSongDto } from './dto/getFilteredSongDto';
 import { ParseIntPipeValidationPipe } from '../../commons/Pipes/parseintpipevalidation.pipe';
+import { Role } from 'src/commons/enums/index.Enum';
 
 @Controller('songs')
 export class SongController {

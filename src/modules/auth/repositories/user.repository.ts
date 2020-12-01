@@ -1,11 +1,14 @@
 import { EntityRepository, Repository } from 'typeorm';
 import { User } from '../entities/user.entity';
 import { BadRequestException, ForbiddenException, ConflictException, NotFoundException, InternalServerErrorException } from '@nestjs/common';
-import { Role } from '../../../commons/enums/role.enum';
+import { Role } from '../../../commons/enums/index.Enum';
 import { EmailLoginDto } from '../dto/email-login.dto';
 
 @EntityRepository(User)
 export class UserRepository extends Repository<User> {
+  constructor() {
+    super()
+  }
   async findByEmail(email: string): Promise<User> {
     try {
       const user = await this.findOne({ email });
@@ -65,7 +68,7 @@ export class UserRepository extends Repository<User> {
   }
 
   async validateAdminPassword(emailLoginDto: EmailLoginDto) {
-    const { email, password } = emailLoginDto;
+    const { email } = emailLoginDto;
     const user = await this.findByEmail(email);
     if (!user) {
       throw new NotFoundException('User does not exist in the database');
@@ -80,6 +83,18 @@ export class UserRepository extends Repository<User> {
       throw new BadRequestException('Your Password in incorrect, please enter another one');
     }
   }
+  async isValidEmail(email: string): Promise<boolean> {
+    return this.isValidEmail(email)
+
+  }
+
+
+  async comparePassword(hashPassword: string): Promise<boolean> {
+
+    return this.comparePassword(hashPassword);
+
+  }
+
 
 
 }
