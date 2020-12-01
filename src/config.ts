@@ -1,5 +1,4 @@
 import { TypeOrmModuleOptions } from '@nestjs/typeorm';
-import { NodemailerOptions } from '@crowdlinker/nestjs-mailer';
 
 const db: TypeOrmModuleOptions = {
   type: "postgres",
@@ -40,6 +39,15 @@ const cloudCon: ConfigOptions = {
 }
 
 
+
+
+const AuthJwt = {
+  secretKey: process.env.secretKey,
+  strategies: ['jwt'],
+  expiresIn: process.env.expiresIn
+};
+
+
 const nodeMailerOptions = {
   transport: {
     host: 'smtp.gmail.com',
@@ -56,35 +64,41 @@ const nodeMailerOptions = {
 }
 
 
+
+const frontEndKeys = {
+  url: 'localhost',
+  port: 4200,
+  endpoints: ['auth/reset-password', 'auth/verify-email'],
+}
+
+
+const vapidKeys = {
+  publicKey: 'publicKey',
+  privateKey: 'privateKey'
+}
+
+const oAuthGoogle = {
+  GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID,
+  GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET,
+  CALL_BACK_URI: process.env.CALL_BACK_URI,
+  SCOPE: ['email', 'profile'],
+}
+const oAuthFacebook = {
+  FACEBOOK_CLIENT_ID: process.env.FACEBOOK_CLIENT_ID,
+  FACEBOOK_SECRET_ID: process.env.FACEBOOK_SECRET_ID,
+  CALL_BACK_URI: process.env.CALL_BACK_URI,
+  SCOPE: ['email'],
+}
+
 export const config = {
   db,
   aws,
   cloudCon,
   nodeMailerOptions,
-  frontEndKeys: {
-    url: 'localhost',
-    port: 4200,
-    endpoints: ['auth/reset-password', 'auth/verify-email'],
-  },
-
-
-  vapidKeys: {
-    publicKey: 'publicKey',
-    privateKey: 'privateKey'
-  },
-
-  oAuthGoogle: {
-    GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID,
-    GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET,
-    CALL_BACK_URI: process.env.CALL_BACK_URI,
-    SCOPE: ['email', 'profile'],
-  },
-
-  oAuthFacebook: {
-    FACEBOOK_CLIENT_ID: process.env.FACEBOOK_CLIENT_ID,
-    FACEBOOK_SECRET_ID: process.env.FACEBOOK_SECRET_ID,
-    CALL_BACK_URI: process.env.CALL_BACK_URI,
-    SCOPE: ['email'],
-  }
+  frontEndKeys,
+  vapidKeys,
+  oAuthGoogle,
+  AuthJwt,
+  oAuthFacebook
 
 };
