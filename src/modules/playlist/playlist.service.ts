@@ -7,9 +7,10 @@ import { DeleteResult } from 'typeorm';
 import { Song } from '../song/song.entity';
 import { Music } from '../music/music.entity';
 import { TrackService } from '../track/track.service';
+import { IPlaylist } from './interface/IPlaylist';
 
 @Injectable()
-export class PlaylistService {
+export class PlaylistService implements IPlaylist {
 
   constructor(private playlistRepository: PlaylistRepository,
     private trackService: TrackService) {
