@@ -1,7 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { AwsService } from '../../shared/modules/aws/aws.service';
-import { ArtistType, Gender } from '../../commons/enums/index.Enum';
 import { DeleteResult } from 'typeorm';
 import { CreateAlbumDto } from '../singer-album/dto/create-album.dto';
 import { MusicianRepository } from './musician.repository';
