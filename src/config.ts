@@ -1,14 +1,17 @@
 import { TypeOrmModuleOptions } from '@nestjs/typeorm';
+import { NodemailerOptions, NodemailerDrivers } from '@crowdlinker/nestjs-mailer';
 
 const db: TypeOrmModuleOptions = {
-  type: "postgres",
-  host: process.env.HOST_DB,
-  database: process.env.DATABASE_NAME,
-  username: process.env.USER_NAME,
-  password: process.env.PASSWORD,
-  port: 5432,
-  entities: [__dirname + '/**/*.entity{.ts,.js}'],
+  name: 'default',
+  type: 'postgres',
+  host: process.env.DATABASE_HOST,
+  port: Number(process.env.DATABASE_PORT),
+  username: process.env.DATABASE_USER,
+  password: process.env.DATABASE_PASSWORD,
+  database: process.env.DATABASE_DB,
   synchronize: true,
+  logging: true,
+  entities: [__dirname + '/**/*.entity{.ts,.js}'],
 }
 type awsType = {
   AWS_S3_BUCKET_NAME: string
@@ -43,12 +46,12 @@ const cloudCon: ConfigOptions = {
 
 const AuthJwt = {
   secretKey: process.env.secretKey,
-  strategies: ['jwt'],
+  strategies: ['jwt','google','facebook'],
   expiresIn: process.env.expiresIn
 };
 
 
-const nodeMailerOptions = {
+export const nodeMailerOptions = {
   transport: {
     host: 'smtp.gmail.com',
     port: 465,
@@ -61,7 +64,7 @@ const nodeMailerOptions = {
       rejectUnauthorized: false,
     },
   },
-}
+} as NodemailerOptions<NodemailerDrivers.SMTP>
 
 
 
@@ -90,7 +93,8 @@ const oAuthFacebook = {
   SCOPE: ['email'],
 }
 
-export const config = {
+
+export default () => ({
   db,
   aws,
   cloudCon,
@@ -99,6 +103,7 @@ export const config = {
   vapidKeys,
   oAuthGoogle,
   AuthJwt,
-  oAuthFacebook
+  oAuthFacebook,
+  port: Number(process.env.PORT),
 
-};
+});
