@@ -24,9 +24,19 @@ import { User } from './entities/user.entity';
 import { AdminAuthGuard } from '../../commons/guards/admin-auth.guard';
 import { UserAuthGuard } from '../../commons/guards/user-auth.guard';
 import { ParseIntPipeValidationPipe } from '../../commons/Pipes/parseintpipevalidation.pipe';
+import { Response, Request } from 'express';
+// import { Crud } from '@nestjsx/crud'
 export type SignUpBody = AuthCredentialsDto & CreateProfileDto
 
 
+
+
+// @Crud({
+//   model: {
+//     type: User
+//   }
+
+// })
 @Controller('auth')
 export class AuthController {
 
@@ -55,19 +65,20 @@ export class AuthController {
 
   @Get('google')
   @UseGuards(AuthGuard('google'))
-  // googleLogin() {
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
+  googleLogin() {
 
-  // }
+  }
 
   // related to callback --> redirection to frontend
   @Get('google/callback')
   @UseGuards(AuthGuard(['google']))
-  googleLoginCallback(@Req() req, @Res() res) {
-    const jwt: string = req.user.jwt;
-    const { id } = req.user.user;
+  googleLoginCallback(@Req() req: Request, @Res() res: Response) {
+    const jwt = req.user.jwt;
+    const { id } = req.user
     if (jwt) {
       res
-        .redirect(`http://localhost:4200/auth/google-success/userId:${id}/accessToken:${jwt}`);
+        .redirect(`http://localhost:4200/auth/google-success/userId:${id}/accessToken:${token}`);
     } else {
       res.redirect('http://localhost:4200/auth/google-failure');
     }
@@ -75,9 +86,9 @@ export class AuthController {
 
   @Get('facebook')
   @UseGuards(AuthGuard('facebook'))
-  // facebookLogin() {
+  facebookLogin() {
 
-  // }
+  }
 
   // related to callback --> redirection to frontend
   @Get('facebook/callback')

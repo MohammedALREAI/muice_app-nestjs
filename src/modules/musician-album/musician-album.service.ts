@@ -2,7 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DeleteResult, Repository } from 'typeorm';
 import { AwsService } from '../../shared/modules/aws/aws.service';
-import { CreateAlbumDto } from '../../shared/dto/create-album.dto';
+import { CreateAlbumDto } from '../singer-album/dto/create-album.dto';
 import { MusicianAlbum } from './musician-album.entity';
 import { Music } from '../music/music.entity';
 import { MusicService } from '../music/music.service';

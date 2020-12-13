@@ -1,8 +1,5 @@
-import { CloudinaryModule } from './modules/cloudinary/cloudinary.module';
-import { FilesModule } from './modules/files/files.module';
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { config } from './config';
 import { AuthModule } from './modules/auth/auth.module';
 import { ProfileModule } from './modules/profile/profile.module';
 import { MusicianModule } from './modules/musician/musician.module';
@@ -16,37 +13,30 @@ import { SingerModule } from './modules/singer/singer.module';
 import { SingerAlbumModule } from './modules/singer-album/singer-album.module';
 import { TrackModule } from './modules/track/track.module';
 import { AwsModule } from './shared/modules/aws/aws.module';
-import { NodemailerDrivers, NodemailerModule, NodemailerOptions } from '@crowdlinker/nestjs-mailer';
+import { NodemailerModule } from '@crowdlinker/nestjs-mailer';
 import { ChatModule } from './shared/modules/chat/chat.module';
 import { AppController } from './app.controller';
 import { MulterModule } from '@nestjs/platform-express';
-import { ConfigModule } from '@nestjs/config';
 
+import { ConfigModule } from '@nestjs/config';
+import configuration from './config'
+import { DatabaseConnectionService } from './DatabaseConnectionService ';
+
+
+const nodeMailerOptions = configuration().nodeMailerOptions
 @Module({
   imports: [
-    ConfigModule.forRoot({envFilePath: ".env"}),
-    TypeOrmModule.forRoot(config.db),
-    CloudinaryModule,
-    FilesModule,
+    ConfigModule.forRoot({
+      isGlobal: true,
+      load: [configuration],
+    }),
+    TypeOrmModule.forRootAsync({
+      useClass: DatabaseConnectionService,
+    }),
     MulterModule.register({
       dest: './files',
     }),
-    FilesModule,
-    NodemailerModule.forRoot(
-      {
-        transport: {
-          host: 'smtp.gmail.com',
-          port: 465,
-          secure: true,
-          auth: {
-            user: 'user',
-            pass: 'pass',
-          },
-          tls: {
-            rejectUnauthorized: false,
-          },
-        },
-      } as NodemailerOptions<NodemailerDrivers.SMTP>),
+    NodemailerModule.forRoot(nodeMailerOptions),
     AuthModule,
     ChatModule,
     ProfileModule,

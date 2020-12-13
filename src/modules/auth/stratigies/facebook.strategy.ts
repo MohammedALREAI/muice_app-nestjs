@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { Strategy } from 'passport-facebook';
-import { config } from '../../../config';
+import config from '../../../config';
 import { UserRepository } from '../repositories/user.repository';
 import { AuthService } from '../auth.service';
 
@@ -9,10 +9,10 @@ import { AuthService } from '../auth.service';
 export class FacebookStrategy extends PassportStrategy(Strategy, 'facebook') {
   constructor(private userRepository: UserRepository, private authService: AuthService) {
     super({
-      clientID: config.oAuthFacebook.FACEBOOK_CLIENT_ID,
-      clientSecret: config.oAuthFacebook.FACEBOOK_SECRET_ID,
-      callbackURL: config.oAuthFacebook.CALL_BACK_URI,
-      scope: config.oAuthFacebook.SCOPE,
+      clientID: process.env.FACEBOOK_CLIENT_ID,
+      clientSecret: process.env.FACEBOOK_SECRET_ID,
+      callbackURL: process.env.CALL_BACK_URI,
+      scope: process.env.SCOPE,
       profileFields: ['id', 'displayName', 'email', 'photos', 'name']
     });
   }

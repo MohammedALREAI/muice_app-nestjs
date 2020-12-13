@@ -15,17 +15,18 @@ import { ChatModule } from '../../shared/modules/chat/chat.module';
 import { NotificationModule } from '../notification/notification.module';
 import { GoogleStrategy } from './stratigies/google.strategy';
 import { FacebookStrategy } from './stratigies/facebook.strategy';
-import { config } from '../../config';
-
+import { ConfigService } from '@nestjs/config';
 @Module({
+
+  //we need to used the some thing like module PROFILE AND
   imports: [
     PassportModule.register({
       defaultStrategy: 'jwt',
     }),
     JwtModule.register({
-      secret: config.AuthJwt.secretKey,
+      secret: 'jwt',
       signOptions: {
-        expiresIn: config.AuthJwt.expiresIn,
+        expiresIn: process.env.expiresIn,
       },
     }),
     TypeOrmModule.forFeature([UserRepository, EmailVerification, ForgottenPassword]),

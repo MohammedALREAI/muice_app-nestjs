@@ -7,3 +7,4 @@ export class EmailLoginDto {
   @IsDefined()
   password: string;
 }
+

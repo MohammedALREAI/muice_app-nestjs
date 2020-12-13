@@ -4,7 +4,7 @@ import { SingerAlbum } from './singer-album.entity';
 import { NotFoundException, BadRequestException } from '@nestjs/common';
 import { Song } from '../song/song.entity';
 import { CreateNewSongDto } from './dto/createNewSongDto';
-import { CreateAlbumDto } from '../../shared/dto/create-album.dto';
+import { CreateAlbumDto } from './dto/create-album.dto';
 import { SongService } from '../song/song.service';
 
 
@@ -22,7 +22,7 @@ export class SingerAlbumsRepository extends Repository<SingerAlbum> {
 
     try {
       const res = await this.find();
-      if (!res) { 
+      if (!res) {
         throw new NotFoundException('the singerRepository not found any items ')
 
 

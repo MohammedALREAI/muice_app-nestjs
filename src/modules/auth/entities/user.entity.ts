@@ -10,7 +10,7 @@ import { Playlist } from '../../playlist/playlist.entity';
 import { Message } from '../../../shared/modules/chat/entities/message.entity';
 import { UserJoinedRoom } from '../../../shared/modules/chat/entities/user-joined-room.entity';
 import { Subscriber } from '../../notification/entities/subscriber.entity';
-import { IsDefined, IsEmail, IsBoolean, IsString, IsNumber, } from 'class-validator';
+import { IsDefined, IsEmail, IsBoolean, IsString, IsNumber, IsEnum } from 'class-validator';
 
 @Entity('users')
 
@@ -25,9 +25,7 @@ export class User extends BaseEntity {
   username: string;
   @IsDefined()
   @IsString()
-  @Column({
-    nullable: true,
-  })
+  @Column({})
   password: string;
   @IsEmail()
   @IsDefined()
@@ -37,9 +35,8 @@ export class User extends BaseEntity {
   email: string;
 
 
-  /// more than on role  that found
-  // @IsOptional()
-  // @IsEnum(Permissions, { each: true })
+
+  @IsEnum(Role, { each: true })
   @Column({
     type: 'enum',
     enum: Role,
@@ -47,6 +44,21 @@ export class User extends BaseEntity {
   })
   roles: Role[];
 
+
+  @Column({
+    type: 'int',
+    default: 0
+  })
+  count: number
+
+
+
+  @Column({
+    type: 'boolean',
+    default: true
+
+  })
+  isActive: boolean
 
   // new column
   @IsBoolean()
@@ -148,7 +160,7 @@ export class User extends BaseEntity {
     if (pattern.test(email)) {
       this.email = email
     }
-    else{
+    else {
       throw new Error("the email not Match pattern")
     }
 

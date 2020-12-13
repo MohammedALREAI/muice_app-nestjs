@@ -2,15 +2,16 @@ import { Injectable } from '@nestjs/common';
 import { Singer } from './singer.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { SingerRepository } from './singer.repository';
-import { CreateAlbumDto } from '../../shared/dto/create-album.dto';
+import { CreateAlbumDto } from '../singer-album/dto/create-album.dto';
 import { SingerAlbum } from '../singer-album/singer-album.entity';
 import { DeleteResult } from 'typeorm';
 import { CreateNewSingerDto } from './dto/createNewSingerDto';
 import { UpdateSingerDto } from './dto/UpdateSingerDto';
 import { GetFilteredSingers } from './dto/getFilteredSingersDto';
+import { ISanger } from './interface/ISinger';
 
 @Injectable()
-export class SingerService {
+export class SingerService implements ISanger {
 
   constructor(@InjectRepository(SingerRepository) private singerRepository: SingerRepository) {
   }

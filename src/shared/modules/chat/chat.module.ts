@@ -8,12 +8,12 @@ import { RoomController } from './room.controller';
 import { ChatService } from './chat.service';
 import { AuthModule } from '../../../modules/auth/auth.module';
 import { ChatGateway } from './chat.gateway';
-import { config } from '../../../config';
+import config from '../../../config';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Room, Message, UserJoinedRoom]),
   PassportModule.register({
-    defaultStrategy: config.AuthJwt.strategies,
+    defaultStrategy: config().AuthJwt.strategies,
   }),
   forwardRef(() => AuthModule)],
   providers: [ChatGateway, ChatService],

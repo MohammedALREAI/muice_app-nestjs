@@ -1,13 +1,12 @@
 import { EntityRepository, Repository, DeleteResult } from 'typeorm';
 import { Singer } from './singer.entity';
-import { ArtistType, Gender } from '../../commons/enums/index.Enum';
 import { CreateNewSingerDto } from './dto/createNewSingerDto';
 import { AwsService } from '../../shared/modules/aws/aws.service';
 import { BadRequestException, NotFoundException } from '@nestjs/common';
 import { UpdateSingerDto } from './dto/UpdateSingerDto';
 import { SingerAlbumService } from '../singer-album/singer-album.service';
 import { SingerAlbum } from '../singer-album/singer-album.entity';
-import { CreateAlbumDto } from '../../shared/dto/create-album.dto';
+import { CreateAlbumDto } from '../singer-album/dto/create-album.dto';
 import { GetFilteredSingers } from './dto/getFilteredSingersDto';
 
 //  when we will be used the  app  we need to injection it

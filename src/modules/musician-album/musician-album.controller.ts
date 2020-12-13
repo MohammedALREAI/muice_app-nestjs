@@ -10,7 +10,7 @@ import {
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
-import { CreateAlbumDto } from '../../shared/dto/create-album.dto';
+import { CreateAlbumDto } from '../singer-album/dto/create-album.dto';
 import { MusicianAlbumService } from './musician-album.service';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { MusicType, Role } from '../../commons/enums/index.Enum';

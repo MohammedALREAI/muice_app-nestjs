@@ -6,6 +6,7 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { CreateProfileDto } from './dto/create-profile.dto';
 import { User } from './entities/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -16,9 +17,7 @@ import { Role } from '../../commons/enums/index.Enum';
 import { EmailVerification } from './entities/email-verification.entity';
 import { Repository } from 'typeorm';
 import { Nodemailer, NodemailerDrivers } from '@crowdlinker/nestjs-mailer';
-import { config } from '../../config';
 import { EmailLoginDto } from './dto/email-login.dto';
-import { JwtPayload } from '../../commons/interfaces/jwt-payload.interface';
 import { JwtService } from '@nestjs/jwt';
 import { ForgottenPassword } from './entities/forgotten-password.entity';
 import { ResetPasswordDto } from './dto/reset-password.dto';
@@ -28,8 +27,8 @@ import { PlaylistService } from '../playlist/playlist.service';
 import { ChatService } from '../../shared/modules/chat/chat.service';
 import { NotificationService } from '../notification/notification.service';
 import { SignUpBody } from './auth.controller';
-import { template } from '../../utils/Mail';
-
+import { template } from '../../commons/helpers/Mail';
+// import { TypeOrmCrudService } from '@nestjsx/crud-typeorm';
 @Injectable()
 export class AuthService {
   constructor(@InjectRepository(UserRepository) private userRepository: UserRepository,
@@ -41,7 +40,9 @@ export class AuthService {
     private favoriteService: FavoriteService,
     private playlistService: PlaylistService,
     private notificationService: NotificationService,
+    private configService: ConfigService,
     @Inject(forwardRef(() => ChatService)) private chatService: ChatService) {
+    // super(userRepository)
   }
 
 
@@ -76,7 +77,7 @@ export class AuthService {
       throw new BadRequestException('You have entered invalid email');
     }
     const user = new User();
-
+    const isFound_Mail = await this.userRepository.findByEmail(email)
     if ((await this.isValidUsername(username))) {
       throw new ConflictException(`Username ${username} is not available, please try another one`);
     } else {
@@ -104,7 +105,7 @@ export class AuthService {
   /*                  Social Methods                   */
   async SignInGoogle(profile: any, googleId: string): Promise<{ user: User, jwt: string }> {
     const { emails } = profile;
-    let googleUser = new User();
+    let googleUser = {} as User;
     googleUser.googleId = googleId;
     googleUser = await this.setUserInfo(googleUser, profile);
     const jwt = this.generateJwtToken(emails[0].value);
@@ -136,7 +137,7 @@ export class AuthService {
     user.username = displayName;
     user.email = emails[0].value;
     user.roles = [Role.USER];
-    const newProfile = new Profile();
+    const newProfile = {} as Profile;
     newProfile.user = user;
     newProfile.firstName = name.givenName;
     newProfile.lastName = name.familyName;
@@ -148,11 +149,14 @@ export class AuthService {
   }
 
 
-  async getUserMainData(user: User): Promise<{ user: User, profile: Profile }> {
+  async getUserMainData(user: User): Promise<{ user: User, profile: Profile, favorite: Favorite }> {
     const profile = await this.profileService.getProfileData(user);
+    const favorite = await this.favoriteService.getUserFavoriteList(profile.favoriteId);
+
     return {
       user,
       profile,
+      favorite
     };
   }
 
@@ -178,14 +182,13 @@ export class AuthService {
 
   // this method well be used in different methods
   generateJwtToken(email: string) {
-    const payload: JwtPayload = { email };
-    const jwt = this.jwtService.sign(payload);
+    const jwt = this.jwtService.sign(email);
     return jwt;
   }
 
   async createProfile(user: User, createProfileDto: CreateProfileDto): Promise<Profile> {
 
-    const profile = new Profile();
+    const profile = {} as Profile
     const favorite = await this.createFavoriteList(profile); // create a foreign key
     const profile2 = await Profile.create({
       ...createProfileDto,
@@ -232,11 +235,15 @@ export class AuthService {
   }
 
   async sendEmailVerification(email: string): Promise<any> {
+    const { url, port, endpoints } = this.configService.get('frontEndKeys');
+    const { username } = this.configService.get("nodeMailerOptions").transport.auth
+
     const verifiedEmail = await this.emailVerificationRepo.findOne({ email });
     if (verifiedEmail && verifiedEmail.emailToken) {
-      const url = `<a style='text-decoration:none;'
-    href= http://${config.frontEndKeys.url}:${config.frontEndKeys.port}/${config.frontEndKeys.endpoints[1]}/${verifiedEmail.emailToken}>Click Here to confirm your email</a>`;
-      const op = template.VerifyEmail(config.nodeMailerOptions.transport.auth.username, config.nodeMailerOptions.transport.auth.username, url)
+      const sendUrl = `<a style='text-decoration:none;'
+    href= http://${url}:${port}/${endpoints[1]}/${verifiedEmail.emailToken}>Click Here to confirm your email</a>`;
+      const op = template.VerifyEmail(username, verifiedEmail.email, sendUrl)
+
       await this.nodeMailerService.sendMail(op).then(info => {
         console.log('Message sent: %s', info.messageId);
       }).catch(err => {
@@ -273,9 +280,13 @@ export class AuthService {
     }
     const tokenModel = await this.createForgottenPasswordToken(email);
     if (tokenModel && tokenModel.newPasswordToken) {
-      const url = `<a style='text-decoration:none;'
-    href= http://${config.frontEndKeys.url}:${config.frontEndKeys.port}/${config.frontEndKeys.endpoints[0]}/${tokenModel.newPasswordToken}>Click here to reset your password</a>`;
-      const op = template.ResetPassword(config.nodeMailerOptions.transport.auth.username, email, url)
+      const { url, port, endpoints
+      } = this.configService.get('frontEndKeys')
+      const { username } = this.configService.get("nodeMailerOptions").transport.auth
+
+      const sendUrl = `<a style='text-decoration:none;'
+    href= http://${url}:${port}/${endpoints[0]}/${tokenModel.newPasswordToken}>Click here to reset your password</a>`;
+      const op = template.ResetPassword(username, email, sendUrl)
       return await this.nodeMailerService.sendMail(op).then(info => {
         console.log('Message sent: %s', info.messageId);
       }).catch(err => {
@@ -344,8 +355,7 @@ export class AuthService {
       throw new BadRequestException('Invalid Email Signature');
     }
     const { email, user } = await this.userRepository.validateAdminPassword(emailLoginDto);
-    const payload: JwtPayload = { email };
-    const accessToken = this.jwtService.sign(payload);
+    const accessToken = this.jwtService.sign(email);
     return { accessToken, user };
   }
 

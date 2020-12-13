@@ -20,6 +20,18 @@ import { ChatService } from './chat.service';
 import { ParseIntPipeValidationPipe } from '../../../commons/Pipes/parseintpipevalidation.pipe';
 
 
+
+
+
+
+
+// Api =>
+// /rooms =>get()
+// rooms:id=>get()
+// user - rooms=>get()
+// rooms=> post create
+
+
 @UseGuards(AuthGuard(), UserAuthGuard)
 @Roles([Role.USER])
 @Controller('rooms')

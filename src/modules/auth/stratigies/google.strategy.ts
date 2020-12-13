@@ -1,23 +1,25 @@
-import { Injectable } from '@nestjs/common';
-import { PassportStrategy } from '@nestjs/passport';
+// import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import * as request from 'supertest';
 import { Strategy } from 'passport-google-oauth20';
-import { config } from '../../../config';
+
+import { PassportStrategy } from "@nestjs/passport";
+
 import { UserRepository } from '../repositories/user.repository';
 import { AuthService } from '../auth.service';
-
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import { NextFunction, Request } from 'express';
 @Injectable()
 export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
   constructor(private userRepository: UserRepository, private authService: AuthService) {
     super({
-      clientID: config.oAuthGoogle.GOOGLE_CLIENT_ID,
-      clientSecret: config.oAuthGoogle.GOOGLE_CLIENT_SECRET,
-      callbackURL: config.oAuthGoogle.CALL_BACK_URI,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+      callbackURL: process.env.CALL_BACK_URI,
+      clientID: process.env.GOOGLE_CLIENT_ID,
+      scope: process.env.SCOPE,
       passReqToCallback: true,
-      scope: config.oAuthGoogle.SCOPE,
     });
   }
-
-  async validate(request: any, accessToken: string,
+  async validate(request: Request, accessToken: string,
     refreshToken: string, profile: any, done: any) {
     // check if the user exist on the database or not
     const { id } = profile;
@@ -38,3 +40,7 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
   }
 
 }
+
+
+
+

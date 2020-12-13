@@ -12,7 +12,7 @@ import { TrackService } from '../track/track.service';
 export class PlaylistService {
 
   constructor(private playlistRepository: PlaylistRepository,
-              private trackService: TrackService) {
+    private trackService: TrackService) {
   }
 
   async getUserPlaylists(user: User): Promise<Playlist[]> {
@@ -33,7 +33,7 @@ export class PlaylistService {
 
   async newPlaylist(user: User, playlistDto: PlaylistDto): Promise<Playlist> {
     const { name } = playlistDto;
-    const playlist = new Playlist();
+    const playlist = {} as Playlist;
     playlist.name = name;
     playlist.user = user; // this will create a foreign key called userId
     playlist.tracks = [];
@@ -58,7 +58,7 @@ export class PlaylistService {
     return result;
   }
 
-  async clearPlaylistContent(id: number): Promise<Playlist>{
+  async clearPlaylistContent(id: number): Promise<Playlist> {
     const playlist = await this.getPlaylistById(id);
     for (let i = 0; i < playlist.tracks.length; i++) {
       await this.trackService.deleteTrack(playlist.tracks[i].id);
@@ -67,10 +67,10 @@ export class PlaylistService {
     return await playlist.save();
   }
 
-  async removeTrackFromPlaylist(playlistId: number, trackId: number): Promise<Playlist>{
+  async removeTrackFromPlaylist(playlistId: number, trackId: number): Promise<Playlist> {
     const playlist = await this.getPlaylistById(playlistId);
     for (let i = 0; i < playlist.tracks.length; i++) {
-      if(playlist.tracks[i].id === trackId){
+      if (playlist.tracks[i].id === trackId) {
         await this.trackService.deleteTrack(trackId);
         playlist.tracks.splice(i, 1);
         break;

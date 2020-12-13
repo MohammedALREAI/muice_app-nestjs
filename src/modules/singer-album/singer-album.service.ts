@@ -2,15 +2,17 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { SingerAlbum } from './singer-album.entity';
 import { DeleteResult } from 'typeorm';
-import { CreateAlbumDto } from '../../shared/dto/create-album.dto';
+import { CreateAlbumDto } from './dto/create-album.dto';
 import { SingerAlbumsRepository } from './singer-albums.repostory';
 import { CreateNewSongDto } from './dto/createNewSongDto';
+import { ISangerAlbum } from './interface/ISinger';
 
 @Injectable()
-export class SingerAlbumService {
+export class SingerAlbumService implements ISangerAlbum {
 
   constructor(@InjectRepository(SingerAlbum) private singerAlbumRepository: SingerAlbumsRepository) {
   }
+
 
   async getAllSingerAlbums(): Promise<SingerAlbum[]> {
     return await this.singerAlbumRepository.find();

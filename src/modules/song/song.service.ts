@@ -10,9 +10,10 @@ import { PlaylistService } from '../playlist/playlist.service';
 import { TrackService } from '../track/track.service';
 import { updateSongType } from './dto/updateSongDto';
 import { GetFilteredSongDto } from './dto/getFilteredSongDto';
+import { ISong } from './interface/ISong';
 
 @Injectable()
-export class SongService {
+export class SongService implements ISong {
   constructor(@InjectRepository(SongRepository) private songRepository: SongRepository,
     private awsService: AwsService,
     private favService: FavoriteService,
