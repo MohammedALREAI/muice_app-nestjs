@@ -3,22 +3,26 @@ import { AppModule } from './app.module';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { SwaggerModule } from '@nestjs/swagger';
 import * as webPush from 'web-push';
-import { config } from './config';
 
 import { join } from 'path';
-import { setUpSwagger } from './utils/setupSwagger';
+import { setUpSwagger } from './commons/helpers/setupSwagger';
+import { ConfigService } from '@nestjs/config';
+
 const bootstrap = async () => {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
   app.useStaticAssets(join(__dirname, '..', '/files'))
+  app.setGlobalPrefix('api/v1')
   app.enableCors();
+  const configService = app.get(ConfigService);
   setUpSwagger(app, SwaggerModule);
+  
   webPush.setVapidDetails(
     'mailto:example@yourdomain.org',
-    config.vapidKeys.publicKey,
-    config.vapidKeys.privateKey,
+    configService.get('vapidKeys')[0],
+    configService.get('vapidKeys')[1],
   );
-  const port: number = Number(process.env.PORT) || 3000;
 
-  await app.listen(port);
+
+  await app.listen(configService.get('PORT'));
 };
 bootstrap();
