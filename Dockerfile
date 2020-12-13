@@ -1,16 +1,12 @@
+FROM node:alpine
 
 
+WORKDIR /home/node/app
+COPY . /home/node/app
+RUN npm install
 
-
-
-
-FROM  node:latestbuilder
-WORKDIR /app/music
-COPY ./package*.json ./
-COPY yarn.lock .
-RUN yarn
-COPY . .
-RUN yarn prebuild && yarn build
-
+# CMD [ "npm", "start" ]
+CMD ["node", "dist/server.js"]
 EXPOSE 3000
-CMD ["yarn", , "start:prod"]
+
+

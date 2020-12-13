@@ -1,0 +1,53 @@
+version: '3'
+
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+
+    environment:
+      - PORT=3000
+      - AWS_S3_BUCKET_NAME=
+      - ACCESS_KEY_ID=
+      - SECRET_ACCESS_KEY=
+      - cdnUrl=https://musice.s3.us-east-1.amazonaws.com/
+      - PORT=4000
+      - cloud_name=dwpo5xilm
+      - api_key=361555244244134
+      - api_secret=tPdPzI6LPvRQPjr7tbiPrlTcpSU
+      - GOOGLE_CLIENT_ID=dasdas
+      - GOOGLE_CLIENT_SECRET=dasdas
+      - CALL_BACK_URI=asdasd
+      - FACEBOOK_CLIENT_ID=880132266126578
+      - FACEBOOK_SECRET_ID=b060775fc2e0eb48841b2ca37c389249
+      - CALL_BACK_URI=dasdas
+      - secretKey=sometextformme
+      - expiresIn=10hr
+      - DATABASE_HOST=localhost
+      - DATABASE_PORT=5432
+      - DATABASE_USER=postgres
+      - DATABASE_DB=music_app
+      - DATABASE_PASSWORD=postgress
+
+PORT=3000
+
+    ports:
+      - 3000:3000
+    depends_on:
+      - postgres
+    links:
+      - postgres:postgres
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+    command: npm run dev
+
+  postgres:
+    image: postgres:alpine
+    restart: always
+    environment:
+      - DB_USER=postgres
+      - DB_PASS=postgress
+
+
