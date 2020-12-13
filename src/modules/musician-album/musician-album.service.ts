@@ -7,9 +7,11 @@ import { MusicianAlbum } from './musician-album.entity';
 import { Music } from '../music/music.entity';
 import { MusicService } from '../music/music.service';
 import { MusicType } from '../../commons/enums/index.Enum';
+import { IMusicianAlbum } from './interface/IMusicianAlbum';
+import { CreateMusicDto } from './dto/createNewMusicDto';
 
 @Injectable()
-export class MusicianAlbumService {
+export class MusicianAlbumService implements IMusicianAlbum {
 
   constructor(@InjectRepository(MusicianAlbum) private musicianAlbumRepository: Repository<MusicianAlbum>,
     private awsService: AwsService,
@@ -32,21 +34,22 @@ export class MusicianAlbumService {
     return musicianAlbum;
   }
 
-  async createNewMusic(musicianAlbumId: number, name: string,
-    description: string,
-    artist: string,
-    type: MusicType,
-    source: any,
-  ): Promise<Music> {
-    const music = new Music();
+  async createNewMusic(createMusicDto: CreateMusicDto): Promise<Music> {
+    const { name, description, artist, musicianAlbumId, type, source } = createMusicDto
     const musicianAlbum = await this.getMusicianAlbumById(musicianAlbumId);
-    music.name = name;
-    music.description = description;
-    music.artist = artist;
-    music.type = type;
-    music.tempImage = musicianAlbum.image;
-    music.source = await this.awsService.fileUpload(source, 'musics');
-    music.musicianAlbum = musicianAlbum;
+    const tempImage = musicianAlbum.image;
+    const mySource = await this.awsService.fileUpload(source, 'musics');
+
+    const music = {
+      name,
+      description,
+      artist,
+      type,
+      tempImage,
+      source: mySource,
+      musicianAlbum
+    } as Music
+
     const savedMusic = await music.save();
     return savedMusic;
   }

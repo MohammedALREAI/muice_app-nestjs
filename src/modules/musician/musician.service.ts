@@ -8,9 +8,11 @@ import { MusicianRepository } from './musician.repository';
 import { Musician } from './musician.entity';
 import { MusicianAlbum } from '../musician-album/musician-album.entity';
 import { MusicianAlbumService } from '../musician-album/musician-album.service';
+import { IMusician, TGetFilteredMusicians, TUpdateMusician } from './interface/IMusician';
+import { CreateNewMusician } from './dto/createNewMusicianDto';
 
 @Injectable()
-export class MusicianService {
+export class MusicianService implements IMusician {
   constructor(@InjectRepository(MusicianRepository) private musicianRepository: MusicianRepository,
     private awsService: AwsService,
     private musicianAlbumService: MusicianAlbumService) {
@@ -24,8 +26,8 @@ export class MusicianService {
     return await this.musicianRepository.getLimitedMusicians(limit);
   }
 
-  async getFilteredMusicians(limit: number, nationality: string, type: ArtistType,
-    gender: Gender): Promise<Musician[]> {
+  async getFilteredMusicians(getFilteredMusicians: TGetFilteredMusicians): Promise<Musician[]> {
+    const { limit, nationality, type, gender } = getFilteredMusicians
     return await this.musicianRepository.getFilteredMusicians(limit, nationality, type, gender);
   }
 
@@ -39,28 +41,31 @@ export class MusicianService {
     return musician;
   }
 
-  async createNewMusician(name: string, info: string, gender: Gender, type: ArtistType,
-    nationality: string,
-    image: any): Promise<Musician> {
-    const musician = new Musician();
-    musician.name = name;
-    musician.info = info;
-    musician.gender = gender;
-    musician.nationality = nationality;
-    musician.type = type;
-    musician.image = await this.awsService.fileUpload(image, 'musician-images');
-    musician.musicianAlbums = [];
+  async createNewMusician(createNewMusician: CreateNewMusician): Promise<Musician> {
+    const { image, name, info, gender, type, nationality } = createNewMusician
+    const myImage = await this.awsService.fileUpload(image, 'musician-images');
+    const musician = {
+      name,
+      info,
+      gender,
+      nationality,
+      type,
+      musicianAlbums: [],
+      image: myImage
+
+    } as Musician
     const savedMusician = await musician.save();
     return savedMusician;
   }
 
-  async updateMusician(id: number, name: string, info: string, gender: Gender, nationality: string,
-    type: ArtistType, image: any): Promise<Musician> {
+  async updateMusician(updateMusician: TUpdateMusician): Promise<Musician> {
+    const { id, image, name, info, gender, type, nationality } = updateMusician
     const musician = await this.getMusicianById(id);
     if (name) {
       musician.name = name;
     }
     if (info) {
+
       musician.info = info;
     }
     if (gender) {
