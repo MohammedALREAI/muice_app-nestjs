@@ -1,13 +1,16 @@
 import { extname } from 'path';
 import { diskStorage } from 'multer';
-export const fileFilter = (req, file, callback) => {
+import * as Express from 'express';
+
+export const fileFilter = (req: Express.Request, file: any, callback) => {
   if (!file.originalname.match(/\.(jpg|jpeg|png|gif)$/)) {
     return callback(new Error('only image file are allowed not matched type'))
   }
   callback(null, true);
 };
 
-export const editFile = (req, file, callback) => {
+type EditType = (req: Express.Request, file: any, callback: any) => void
+export const editFile = (req: Express.Request, file: any, callback): EditType => {
   const name = file.originalname.split('.')[0];
   const fileExtName = extname(file.originalname);
   const randomName = Math.random().toString(36).substr(2);
@@ -17,12 +20,12 @@ export const editFile = (req, file, callback) => {
 
 
 
-export const storageName = (name: string) => {
-  return {
+export const storageName = (name: string) => (
+  {
     storage: diskStorage({
       destination: `./file/${name}`,
       filename: editFile
     })
-  }
-}
+  })
+
 
