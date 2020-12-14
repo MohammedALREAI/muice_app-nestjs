@@ -6,7 +6,7 @@ import { Roles } from '../../commons/decorators/roles.decorator';
 import { AcceptedAuthGuard } from '../../commons/guards/accepted-auth.guard';
 import { GetAuthenticatedUser } from '../../commons/decorators/get-authenticated-user.decorator';
 import { User } from '../auth/entities/user.entity';
-import { NotificationPayloadDto } from './notification-payload.dto';
+import { NotificationPayloadDto } from './dto/notification-payload.dto';
 import { NotificationService } from './notification.service';
 import { UserAuthGuard } from '../../commons/guards/user-auth.guard';
 import { ParseIntPipeValidationPipe } from '../../commons/Pipes/parseintpipevalidation.pipe';

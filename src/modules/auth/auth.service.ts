@@ -28,9 +28,9 @@ import { ChatService } from '../../shared/modules/chat/chat.service';
 import { NotificationService } from '../notification/notification.service';
 import { SignUpBody } from './auth.controller';
 import { template } from '../../commons/helpers/Mail';
-// import { TypeOrmCrudService } from '@nestjsx/crud-typeorm';
+import { IAuth } from './interface/IAuth';
 @Injectable()
-export class AuthService {
+export class AuthService implements IAuth {
   constructor(@InjectRepository(UserRepository) private userRepository: UserRepository,
     @InjectRepository(EmailVerification) private emailVerificationRepo: Repository<EmailVerification>,
     @InjectRepository(ForgottenPassword) private forgottenPasswordRepo: Repository<ForgottenPassword>,
@@ -42,7 +42,6 @@ export class AuthService {
     private notificationService: NotificationService,
     private configService: ConfigService,
     @Inject(forwardRef(() => ChatService)) private chatService: ChatService) {
-    // super(userRepository)
   }
 
 

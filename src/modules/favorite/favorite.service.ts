@@ -6,10 +6,11 @@ import { Profile } from '../profile/profile.entity';
 import { TrackService } from '../track/track.service';
 import { Music } from '../music/music.entity';
 import { Song } from '../song/song.entity';
+import { IFavorite } from './interface/IFavorite';
 
 
 @Injectable()
-export class FavoriteService {
+export class FavoriteService implements IFavorite {
   constructor(@InjectRepository(Favorite) private readonly favoriteRepository: Repository<Favorite>,
     private trackService: TrackService) {
   }

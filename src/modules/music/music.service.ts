@@ -9,9 +9,10 @@ import { FavoriteService } from '../favorite/favorite.service';
 import { Track } from '../track/track.entity';
 import { PlaylistService } from '../playlist/playlist.service';
 import { TrackService } from '../track/track.service';
+import { IMusic } from './interface/IMusic';
 
 @Injectable()
-export class MusicService {
+export class MusicService implements IMusic {
   constructor(@InjectRepository(MusicRepository) private musicRepository: MusicRepository,
     private awsService: AwsService,
     private favService: FavoriteService,
