@@ -49,7 +49,12 @@ $ npm run start:dev
 # production mode
 $ npm run start:prod
 ```
+# used docker by 
+$ yarn docker
 
+
+# show the swegger y 
+$ http://localhost:3000/api/
 ## Test
 
 ```bash
