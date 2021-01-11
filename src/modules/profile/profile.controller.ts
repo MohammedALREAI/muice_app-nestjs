@@ -3,11 +3,9 @@ import {
   Controller,
   Delete,
   Get,
-  HttpStatus,
   Patch,
   Post,
   Put,
-  Res,
   UploadedFile,
   UseGuards,
   UseInterceptors,
@@ -20,8 +18,8 @@ import { AuthGuard } from '@nestjs/passport';
 import { AcceptedAuthGuard } from '../../commons/guards/accepted-auth.guard';
 import { Roles } from '../../commons/decorators/roles.decorator';
 import { ProfileService } from './profile.service';
-import { Response } from 'express'
 import { Role } from '../../commons/enums/index.Enum';
+
 
 @UseGuards(AuthGuard(), AcceptedAuthGuard)
 @Roles([Role.ADMIN, Role.USER])
@@ -32,40 +30,30 @@ export class ProfileController {
   }
 
   @Get('user-profile')
-  getUserProfile(@GetAuthenticatedUser() user: User, @Res() res: Response) {
-    const data = this.profileService.getProfileData(user);
-    res.status(HttpStatus.FOUND).json(data);
+  getUserProfile(@GetAuthenticatedUser() user: User) {
+    return this.profileService.getProfileData(user);
   }
-
 
   @Post('user-profile/set-profile-image')
   @UseInterceptors(FileInterceptor('image'))
-  setProfileImage(@GetAuthenticatedUser() user: User, @UploadedFile() image: any, @Res() res: Response) {
-
-    const data = this.profileService.setProfileImage(user, image);
-    res.status(HttpStatus.ACCEPTED).json(data)
+  setProfileImage(@GetAuthenticatedUser() user: User, @UploadedFile() image: any) {
+    return this.profileService.setProfileImage(user, image);
   }
 
   @Patch('user-profile/change-profile-image')
   @UseInterceptors(FileInterceptor('image'))
-  changeProfileImage(@GetAuthenticatedUser() user: User, @UploadedFile() image: any, @Res() res: Response) {
-
-    const data = this.profileService.changeProfileImage(user, image)
-    res.status(HttpStatus.ACCEPTED).json(data)
+  changeProfileImage(@GetAuthenticatedUser() user: User, @UploadedFile() image: any) {
+    return this.profileService.changeProfileImage(user, image);
   }
 
   @Put('user-profile/edit-profile')
-  editProfile(@GetAuthenticatedUser() user: User, @Body() createProfileDto: CreateProfileDto, @Res() res: Response) {
-
-    const data = this.profileService.editProfile(user, createProfileDto);
-    res.status(HttpStatus.OK).json(data)
+  editProfile(@GetAuthenticatedUser() user: User, @Body() createProfileDto: CreateProfileDto) {
+    return this.profileService.editProfile(user, createProfileDto);
   }
 
   @Delete('user-profile/delete-profile-image')
-  deleteProfileImage(@GetAuthenticatedUser() user: User, @Res() res: Response) {
-
-    const data = this.profileService.deleteProfileImage(user);
-    res.status(HttpStatus.ACCEPTED).json(data)
+  deleteProfileImage(@GetAuthenticatedUser() user: User) {
+    return this.profileService.deleteProfileImage(user);
   }
 
 }

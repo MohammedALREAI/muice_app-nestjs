@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Room } from './entities/room.entity';
 import { Repository } from 'typeorm';
@@ -6,10 +6,10 @@ import { Message } from './entities/message.entity';
 import { UserJoinedRoom } from './entities/user-joined-room.entity';
 import { User } from '../../../modules/auth/entities/user.entity';
 import { RoomDto } from './dto/room.dto';
-import { ChatServiceFunction } from './interface/charService';
+
 
 @Injectable()
-export class ChatService implements ChatServiceFunction {
+export class ChatService {
   constructor(
     @InjectRepository(Message) private messageRepository: Repository<Message>,
     @InjectRepository(Room) private roomRepository: Repository<Room>,
@@ -18,11 +18,11 @@ export class ChatService implements ChatServiceFunction {
   }
 
 
-  async getAllRooms(): Promise<Room[]> {
+  async getAllRooms() {
     return this.roomRepository.find();
   }
 
-  async getRoomById(id: number): Promise<Room> {
+  async getRoomById(id: number) {
     const room = await this.roomRepository.findOne({
       where: { id },
     });
@@ -32,20 +32,20 @@ export class ChatService implements ChatServiceFunction {
     return room;
   }
 
-  async deleteUserMessages(user: User): Promise<void> {
+  async deleteUserMessages(user: User) {
     for (let i = 0; i < user.messages.length; i++) {
       await this.messageRepository.delete(user.messages[i].id);
     }
   }
 
-  async deleteUserJoinedRooms(user: User): Promise<void> {
+  async deleteUserJoinedRooms(user: User) {
     for (let i = 0; i < user.userJoinedRooms.length; i++) {
       await this.userJoinedRoomRepository.delete(user.userJoinedRooms[i].id);
     }
   }
 
 
-  async getUserRooms(user: User): Promise<Room[]> {
+  async getUserRooms(user: User) {
     const query = this.roomRepository.createQueryBuilder('room');
     query.select()
       .where('room.createdBy LIKE :username', { username: user.username });
@@ -54,9 +54,9 @@ export class ChatService implements ChatServiceFunction {
   }
 
   async createNewRoom(user: User,
-    createRoomDto: RoomDto): Promise<Room> {
+                      createRoomDto: RoomDto) {
     const { name } = createRoomDto;
-    const room = {} as Room;
+    const room = new Room();
     room.name = name;
     room.messages = [];
     room.userJoinedRooms = [];
@@ -65,7 +65,7 @@ export class ChatService implements ChatServiceFunction {
   }
 
   async updateRoom(id: number,
-    updateRoomDto: RoomDto): Promise<Room> {
+                   updateRoomDto: RoomDto) {
     const { name } = updateRoomDto;
     const room = await this.getRoomById(id);
     if (name) {
@@ -74,7 +74,7 @@ export class ChatService implements ChatServiceFunction {
     return await room.save();
   }
 
-  async deleteRoom(id: number): Promise<boolean> {
+  async deleteRoom(id: number) {
     const room = await this.getRoomById(id);
     for (let i = 0; i < room.messages.length; i++) {
       await this.messageRepository.delete(room.messages[i].id);

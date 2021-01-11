@@ -9,10 +9,9 @@ import { FavoriteService } from '../favorite/favorite.service';
 import { Track } from '../track/track.entity';
 import { PlaylistService } from '../playlist/playlist.service';
 import { TrackService } from '../track/track.service';
-import { IMusic } from './interface/IMusic';
 
 @Injectable()
-export class MusicService implements IMusic {
+export class MusicService {
   constructor(@InjectRepository(MusicRepository) private musicRepository: MusicRepository,
     private awsService: AwsService,
     private favService: FavoriteService,
@@ -21,18 +20,7 @@ export class MusicService implements IMusic {
   }
 
   async getAllMusics(): Promise<Music[]> {
-    try {
-      const musics = await this.musicRepository.find();
-      if (musics.length > 0) {
-        return musics
-      }
-      throw new NotFoundException('there is no musics')
-
-
-    } catch (e) {
-      throw new NotFoundException('there is no musics')
-
-    }
+    return await this.musicRepository.find();
   }
 
   async getMusicById(id: number): Promise<Music> {

@@ -3,7 +3,7 @@ import {
   Controller,
   Delete,
   Get,
-  Param,
+  Param, ParseArrayPipe, ParseIntPipe,
   Post,
   Put,
   Query,
@@ -11,19 +11,17 @@ import {
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
-import { MusicType, Role } from '../../commons/enums/index.Enum';
 import { MusicService } from './music.service';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { AuthGuard } from '@nestjs/passport';
 import { UserAuthGuard } from '../../commons/guards/user-auth.guard';
 import { Roles } from '../../commons/decorators/roles.decorator';
+import { Role, MusicType } from '../../commons/enums/index.Enum';
 import { AdminAuthGuard } from '../../commons/guards/admin-auth.guard';
-import { UpdateMusicDto } from './dto/updateMusic';
-import { ParseIntPipeValidationPipe } from '../../commons/Pipes/parseintpipevalidation.pipe';
 
 @Controller('musics')
 export class MusicController {
-  constructor(private readonly musicService: MusicService) {
+  constructor(private musicService: MusicService) {
 
   }
 
@@ -44,54 +42,49 @@ export class MusicController {
     return this.musicService.getFilteredMusics(limit, type, rate);
   }
 
+
+
   @Get(':id')
-  getMusicById(@Param('id', new ParseIntPipeValidationPipe()) id: number) {
+  getMusicById(@Param('id', ParseIntPipe) id: number) {
     return this.musicService.getMusicById(id);
   }
+
+
+
 
   @Put(':id/update-music')
   @UseGuards(AuthGuard(), AdminAuthGuard)
   @Roles([Role.ADMIN])
   @UseInterceptors(FileInterceptor('source'))
-  updateMusic(@Param('id', new ParseIntPipeValidationPipe()) id: number,
-    @Body() body: UpdateMusicDto,
+  updateMusic(@Param('id', ParseIntPipe) id: number,
+    @Body('name') name: string,
+    @Body('description') description: string,
+    @Body('artist') artist: string,
+    @Body('type') type: MusicType,
     @UploadedFile() source: any) {
-    const { description, artist, type, name } = body
     return this.musicService.updateMusic(id, name, description, artist, type, source);
   }
 
   @Delete(':id/delete-music')
   @UseGuards(AuthGuard(), AdminAuthGuard)
   @Roles([Role.ADMIN])
-  delete(@Param('id', new ParseIntPipeValidationPipe()) id: number) {
+  delete(@Param('id', ParseIntPipe) id: number) {
     return this.musicService.deleteMusic(id);
   }
 
   @Post(':musicId/add-to-playlist/:playlistId')
   @UseGuards(AuthGuard(), UserAuthGuard)
   @Roles([Role.USER])
-  addToPlaylist(@Param('musicId', new ParseIntPipeValidationPipe()) musicId: number,
-    @Param('playlistId', new ParseIntPipeValidationPipe()) playlistId: number) {
+  addToPlaylist(@Param('musicId', ParseIntPipe) musicId: number,
+    @Param('playlistId', ParseIntPipe) playlistId: number) {
     return this.musicService.pushToPlaylist(musicId, playlistId);
   }
 
   @Post(':musicId/save-to-favorite-list/:favoriteId')
   @UseGuards(AuthGuard(), UserAuthGuard)
   @Roles([Role.USER])
-  saveToFavoriteList(@Param('musicId', new ParseIntPipeValidationPipe()) musicId: number,
-    @Param('favoriteId', new ParseIntPipeValidationPipe()) favoriteId: number) {
+  saveToFavoriteList(@Param('musicId', ParseIntPipe) musicId: number,
+    @Param('favoriteId', ParseIntPipe) favoriteId: number) {
     return this.musicService.pushToFavoriteList(musicId, favoriteId);
   }
 }
-
-
-
-
-
-
-
-
-
-
-
-

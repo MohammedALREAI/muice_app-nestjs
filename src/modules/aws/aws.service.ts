@@ -1,15 +1,20 @@
 import { Injectable } from '@nestjs/common';
-import * as AWS from 'aws-sdk';
+import * as AWS from 'aws-sdk'
 import { extname } from 'path';
-import myConfig from '../../../config';
-const config = myConfig()
-const s3 = new AWS.S3();
-AWS.config.update({
-  accessKeyId: config.aws.ACCESS_KEY_ID,
-  secretAccessKey: config.aws.SECRET_ACCESS_KEY,
-});
+
 @Injectable()
 export class AwsService {
+
+
+  constructor(private s3: AWS.S3) {
+
+    this.s3 = new AWS.S3();
+    AWS.config.update({
+      accessKeyId: process.env.ACCESS_KEY_ID,
+      secretAccessKey: process.env.SECRET_ACCESS_KEY,
+    });
+  }
+
   async fileUpload(file: any, folderName: string): Promise<string> {
     return new Promise((resolve, reject) => {
       const name = file.originalname.split('.')[0];
@@ -19,16 +24,16 @@ export class AwsService {
         .map(() => Math.round(Math.random() * 16).toString(16))
         .join('');
       const params: AWS.S3.Types.PutObjectRequest = {
-        Bucket: 'music-land',
+        Bucket: process.env.AWS_S3_BUCKET_NAME,
         Key: `${folderName}/${name}-${randomName}${fileExtName}`,
         Body: file.buffer,
         ACL: 'public-read',
       };
-      s3.upload(params, (err, data: AWS.S3.ManagedUpload.SendData) => {
+      this.s3.upload(params, (err, data: AWS.S3.ManagedUpload.SendData) => {
         if (err) {
           return reject(err);
         }
-        resolve(`${config.aws.cdnUrl}/${data.Key}`);
+        resolve(`${process.env.cdnUrl}/${data.Key}`);
       });
     });
   }
@@ -40,7 +45,7 @@ export class AwsService {
         Bucket: 'music-land',
         Key: filename.substring(46),
       };
-      s3.deleteObject(params, (err, data) => {
+      this.s3.deleteObject(params, (err, data) => {
         if (err) {
           return reject(err);
         }

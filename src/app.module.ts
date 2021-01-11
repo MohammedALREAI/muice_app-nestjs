@@ -1,3 +1,4 @@
+import { AwsModule } from './modules/aws/aws.module';
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from './modules/auth/auth.module';
@@ -12,23 +13,25 @@ import { NotificationModule } from './modules/notification/notification.module';
 import { SingerModule } from './modules/singer/singer.module';
 import { SingerAlbumModule } from './modules/singer-album/singer-album.module';
 import { TrackModule } from './modules/track/track.module';
-import { AwsModule } from './shared/modules/aws/aws.module';
 import { NodemailerModule } from '@crowdlinker/nestjs-mailer';
 import { ChatModule } from './shared/modules/chat/chat.module';
 import { AppController } from './app.controller';
 import { MulterModule } from '@nestjs/platform-express';
-
+import * as dotenv from 'dotenv'
 import { ConfigModule } from '@nestjs/config';
 import configuration from './config'
 import { DatabaseConnectionService } from './DatabaseConnectionService ';
 
-
 const nodeMailerOptions = configuration().nodeMailerOptions
 @Module({
   imports: [
+
     ConfigModule.forRoot({
       isGlobal: true,
       load: [configuration],
+      ignoreEnvFile: true,
+      envFilePath: '.env',
+
     }),
     TypeOrmModule.forRootAsync({
       useClass: DatabaseConnectionService,
@@ -50,7 +53,6 @@ const nodeMailerOptions = configuration().nodeMailerOptions
     MusicianAlbumModule,
     TrackModule,
     NotificationModule,
-    AwsModule,
   ],
   controllers: [AppController],
 })

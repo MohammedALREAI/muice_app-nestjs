@@ -1,4 +1,4 @@
-import { Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Favorite } from './favorite.entity';
 import { Repository } from 'typeorm';
@@ -6,51 +6,35 @@ import { Profile } from '../profile/profile.entity';
 import { TrackService } from '../track/track.service';
 import { Music } from '../music/music.entity';
 import { Song } from '../song/song.entity';
-import { IFavorite } from './interface/IFavorite';
 
 
 @Injectable()
-export class FavoriteService implements IFavorite {
+export class FavoriteService {
   constructor(@InjectRepository(Favorite) private readonly favoriteRepository: Repository<Favorite>,
-    private trackService: TrackService) {
+              private trackService: TrackService) {
   }
 
   async getUserFavoriteList(id: number, profile?: Profile): Promise<Favorite> {
-    try {
-      const favoriteList = await this.favoriteRepository.findOne(id);
-      if (favoriteList && profile) {
-        try {
-          return await this.favoriteRepository.findOne({ profile });
-
-        } catch (e) {
-          throw new NotFoundException('Favorite list does not  for your profile');
-        }
-
-      }
+    let favoriteList = null;
+    if (id) {
+      favoriteList = await this.favoriteRepository.findOne({
+        where: {
+          id,
+        },
+      });
+    } else if (profile) {
+      favoriteList = await this.favoriteRepository.findOne({ profile });
+    } else {
       throw new NotFoundException('Favorite list does not found');
-
-
-    } catch (e) {
-      throw new InternalServerErrorException('there are some error in server ')
     }
-
-
-
+    return favoriteList;
   }
 
   async deleteFavoriteList(id: number): Promise<void> {
-    try {
-      await this.clearFavoriteListContent(id);
-      const result = await this.favoriteRepository.delete(id);
-      // affected===0 this is no one has deleted
-      if (result.affected === 0) {
-        throw new NotFoundException('favorite list does not found');
-      }
-
-    } catch (e) {
-      throw new InternalServerErrorException(`there are some ${e}`)
-
-
+    await this.clearFavoriteListContent(id);
+    const result = await this.favoriteRepository.delete(id);
+    if (result.affected === 0) {
+      throw new NotFoundException('favorite list does not found');
     }
   }
 
@@ -70,7 +54,7 @@ export class FavoriteService implements IFavorite {
         await this.trackService.deleteTrack(
           trackId,
         );
-        favorite.tracks.splice(i, 1);
+        favorite.tracks.splice(i,1);
         break;
       }
     }

@@ -1,4 +1,3 @@
-import { ValidateNested } from 'class-validator';
 import { BaseEntity, Entity, OneToMany, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { Profile } from '../profile/profile.entity';
 import { Track } from '../track/track.entity';
@@ -15,7 +14,5 @@ export class Favorite extends BaseEntity{
   @OneToMany(type => Track, track => track.favorite, {
     eager: true
   })
-  @ValidateNested()
-
   tracks: Track[];
 }

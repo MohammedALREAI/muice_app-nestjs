@@ -1,30 +1,28 @@
-// import { Injectable, InternalServerErrorException } from '@nestjs/common';
-import * as request from 'supertest';
+import { Injectable } from '@nestjs/common';
+import { PassportStrategy } from '@nestjs/passport';
 import { Strategy } from 'passport-google-oauth20';
-
-import { PassportStrategy } from "@nestjs/passport";
-
+import myconfig from '../../../config';
 import { UserRepository } from '../repositories/user.repository';
 import { AuthService } from '../auth.service';
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
-import { NextFunction, Request } from 'express';
+
+const config = myconfig()
 @Injectable()
 export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
   constructor(private userRepository: UserRepository, private authService: AuthService) {
     super({
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      callbackURL: process.env.CALL_BACK_URI,
-      clientID: process.env.GOOGLE_CLIENT_ID,
-      scope: process.env.SCOPE,
+      clientID: config.oAuthGoogle.GOOGLE_CLIENT_ID,
+      clientSecret: config.oAuthGoogle.GOOGLE_CLIENT_SECRET,
+      callbackURL: config.oAuthGoogle.CALL_BACK_URI,
       passReqToCallback: true,
+      scope: config.oAuthGoogle.SCOPE,
     });
   }
-  async validate(request: Request, accessToken: string,
+
+  async validate(request: any, accessToken: string,
     refreshToken: string, profile: any, done: any) {
     // check if the user exist on the database or not
     const { id } = profile;
-    // eslint-disable-next-line prefer-const
-    let user = await this.userRepository.findOne({
+    const user = await this.userRepository.findOne({
       where: {
         googleId: id,
       },
@@ -40,7 +38,3 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
   }
 
 }
-
-
-
-

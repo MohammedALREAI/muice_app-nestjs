@@ -1,10 +1,8 @@
-import { IsDefined, IsString } from 'class-validator';
+import { ApiProperty } from "@nestjs/swagger";
 export class EmailLoginDto {
-  @IsString()
-  @IsDefined()
+
+  @ApiProperty()
   email: string;
-  @IsString()
-  @IsDefined()
+  @ApiProperty()
   password: string;
 }
-

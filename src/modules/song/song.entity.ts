@@ -1,9 +1,9 @@
+import { SongLanguage } from './../../commons/enums/index.Enum';
 import { Column, Entity, ManyToOne, OneToMany, Unique } from 'typeorm';
 import { AbstractMusic } from '../../commons/classes/abstract-music';
-
-import { Track } from '../track/track.entity';
-import { SongType, SongLanguage } from '../../commons/enums/index.Enum';
 import { SingerAlbum } from '../singer-album/singer-album.entity';
+import { Track } from '../track/track.entity';
+import { SongType } from '../../commons/enums/index.Enum';
 
 @Entity('songs')
 @Unique(['name', 'source'])

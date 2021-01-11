@@ -3,7 +3,7 @@ import {
   Controller,
   Delete,
   Get,
-  Param,
+  Param, ParseIntPipe,
   Post,
   Put,
   Query,
@@ -11,23 +11,18 @@ import {
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
-import { ArtistType, Gender, Role } from '../../commons/enums/index.Enum';
-import { CreateAlbumDto } from '../singer-album/dto/create-album.dto';
+import { Gender, ArtistType } from '../../commons/enums/index.Enum';
+import { CreateAlbumDto } from '../../shared/dto/create-album.dto';
 import { SingerService } from './singer.service';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { AuthGuard } from '@nestjs/passport';
 import { AdminAuthGuard } from '../../commons/guards/admin-auth.guard';
 import { Roles } from '../../commons/decorators/roles.decorator';
-import { CreateNewSingerDto } from './dto/createNewSingerDto';
-import { UpdateSingerDto } from './dto/UpdateSingerDto';
-import { GetFilteredSingers } from './dto/getFilteredSingersDto';
-import { editFile } from '../../commons/helpers/handling-files.helper';
-import { diskStorage } from 'multer';
-import { ParseIntPipeValidationPipe } from '../../commons/Pipes/parseintpipevalidation.pipe';
+import { Role } from '../../commons/enums/index.Enum';
 @Controller('singers')
 export class SingerController {
 
-  constructor(private readonly singerService: SingerService) {
+  constructor(private singerService: SingerService) {
   }
 
   //localhost:3000/singers
@@ -37,9 +32,12 @@ export class SingerController {
   }
 
   @Get('filtered')
-  getFilteredSingers(@Query() getFilteredSingers: GetFilteredSingers) {
+  getFilteredSingers(@Query('limit') limit: number,
+    @Query('type') type: ArtistType,
+    @Query('nationality') nationality: string,
+    @Query('gender') gender: Gender) {
 
-    return this.singerService.getFilteredSingers(getFilteredSingers);
+    return this.singerService.getFilteredSingers(limit, nationality, type, gender);
   }
 
   @Get('limited')
@@ -48,33 +46,30 @@ export class SingerController {
   }
 
 
-
   //localhost:3000/singers
   @Post()
-  @UseInterceptors(
-    FileInterceptor('image', {
-      storage: diskStorage({
-        destination: './file/singers',
-        filename: editFile,
-      }),
-    }))
+  @UseInterceptors(FileInterceptor('image'))
   @UseGuards(AuthGuard(), AdminAuthGuard)
   @Roles([Role.ADMIN])
-  createNewSinger(@Body() createNewSingerDto: CreateNewSingerDto,
+  createNewSinger(@Body('name') name: string,
+    @Body('info') info: string,
+    @Body('gender') gender: Gender,
+    @Body('nationality') nationality: string,
+    @Body('type') type: ArtistType,
     @UploadedFile() image: any) {
-    return this.singerService.createNewSinger(createNewSingerDto, image.path);
+    return this.singerService.createNewSinger(name, info, gender, type, nationality, image);
   }
 
   //localhost:3000/singers/:id
   @Get(':id')
-  getSingerById(@Param('id', new ParseIntPipeValidationPipe()) id: number) {
+  getSingerById(@Param('id', ParseIntPipe) id: number) {
     return this.singerService.getSingerById(id);
   }
 
   @Post(':id/new-album')
   @UseGuards(AuthGuard(), AdminAuthGuard)
   @Roles([Role.ADMIN])
-  createNewAlbum(@Param('id', new ParseIntPipeValidationPipe()) id: number,
+  createNewAlbum(@Param('id', ParseIntPipe) id: number,
     @Body() createAlbumDto: CreateAlbumDto) {
 
     return this.singerService.createNewAlbum(id, createAlbumDto);
@@ -84,23 +79,20 @@ export class SingerController {
   @UseGuards(AuthGuard(), AdminAuthGuard)
   @Roles([Role.ADMIN])
   @UseInterceptors(FileInterceptor('image'))
-  updateSinger(@Param('id', new ParseIntPipeValidationPipe()) id: number,
+  updateSinger(@Param('id', ParseIntPipe) id: number,
     @Body('name') name: string,
     @Body('info') info: string,
     @Body('gender') gender: Gender,
     @Body('nationality') nationality: string,
     @Body('type') type: ArtistType,
     @UploadedFile() image: any) {
-    const updateSingerDto: UpdateSingerDto = {
-      id, name, info, gender, nationality, type, image
-    }
-    return this.singerService.updateSinger(updateSingerDto);
+    return this.singerService.updateSinger(id, name, info, gender, nationality, type, image);
   }
 
   @Delete(':id/delete-singer')
   @UseGuards(AuthGuard(), AdminAuthGuard)
   @Roles([Role.ADMIN])
-  deleteSinger(@Param('id', new ParseIntPipeValidationPipe()) id: number) {
+  deleteSinger(@Param('id', ParseIntPipe) id: number) {
     return this.singerService.deleteSinger(id);
   }
 

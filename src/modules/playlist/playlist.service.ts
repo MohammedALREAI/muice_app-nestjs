@@ -7,13 +7,12 @@ import { DeleteResult } from 'typeorm';
 import { Song } from '../song/song.entity';
 import { Music } from '../music/music.entity';
 import { TrackService } from '../track/track.service';
-import { IPlaylist } from './interface/IPlaylist';
 
 @Injectable()
-export class PlaylistService implements IPlaylist {
+export class PlaylistService {
 
   constructor(private playlistRepository: PlaylistRepository,
-    private trackService: TrackService) {
+              private trackService: TrackService) {
   }
 
   async getUserPlaylists(user: User): Promise<Playlist[]> {
@@ -34,7 +33,7 @@ export class PlaylistService implements IPlaylist {
 
   async newPlaylist(user: User, playlistDto: PlaylistDto): Promise<Playlist> {
     const { name } = playlistDto;
-    const playlist = {} as Playlist;
+    const playlist = new Playlist();
     playlist.name = name;
     playlist.user = user; // this will create a foreign key called userId
     playlist.tracks = [];
@@ -59,7 +58,7 @@ export class PlaylistService implements IPlaylist {
     return result;
   }
 
-  async clearPlaylistContent(id: number): Promise<Playlist> {
+  async clearPlaylistContent(id: number): Promise<Playlist>{
     const playlist = await this.getPlaylistById(id);
     for (let i = 0; i < playlist.tracks.length; i++) {
       await this.trackService.deleteTrack(playlist.tracks[i].id);
@@ -68,10 +67,10 @@ export class PlaylistService implements IPlaylist {
     return await playlist.save();
   }
 
-  async removeTrackFromPlaylist(playlistId: number, trackId: number): Promise<Playlist> {
+  async removeTrackFromPlaylist(playlistId: number, trackId: number): Promise<Playlist>{
     const playlist = await this.getPlaylistById(playlistId);
     for (let i = 0; i < playlist.tracks.length; i++) {
-      if (playlist.tracks[i].id === trackId) {
+      if(playlist.tracks[i].id === trackId){
         await this.trackService.deleteTrack(trackId);
         playlist.tracks.splice(i, 1);
         break;

@@ -3,7 +3,7 @@ import {
   Controller,
   Delete,
   Get,
-  Param,
+  Param, ParseIntPipe,
   Post,
   Put,
   Query,
@@ -11,14 +11,14 @@ import {
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
-import { ArtistType, Gender, Role } from '../../commons/enums/index.Enum';
-import { CreateAlbumDto } from '../singer-album/dto/create-album.dto';
+import { Gender, ArtistType } from '../../commons/enums/index.Enum';
+import { CreateAlbumDto } from '../../shared/dto/create-album.dto';
 import { MusicianService } from './musician.service';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { AuthGuard } from '@nestjs/passport';
 import { AdminAuthGuard } from '../../commons/guards/admin-auth.guard';
 import { Roles } from '../../commons/decorators/roles.decorator';
-import { ParseIntPipeValidationPipe } from '../../commons/Pipes/parseintpipevalidation.pipe';
+import { Role } from '../../commons/enums/index.Enum';
 
 
 @Controller('musicians')
@@ -63,14 +63,14 @@ export class MusicianController {
 
   //localhost:3000/musicians/:id
   @Get(':id')
-  getMusicianById(@Param('id', new ParseIntPipeValidationPipe()) id: number) {
+  getMusicianById(@Param('id', ParseIntPipe) id: number) {
     return this.musicianService.getMusicianById(id);
   }
 
   @Post(':id/new-album')
   @UseGuards(AuthGuard(), AdminAuthGuard)
   @Roles([Role.ADMIN])
-  createNewAlbum(@Param('id', new ParseIntPipeValidationPipe()) id: number,
+  createNewAlbum(@Param('id', ParseIntPipe) id: number,
     @Body() createAlbumDto: CreateAlbumDto) {
 
     return this.musicianService.createNewAlbum(id, createAlbumDto);
@@ -80,7 +80,7 @@ export class MusicianController {
   @UseGuards(AuthGuard(), AdminAuthGuard)
   @Roles([Role.ADMIN])
   @UseInterceptors(FileInterceptor('image'))
-  updateMusician(@Param('id', new ParseIntPipeValidationPipe()) id: number,
+  updateMusician(@Param('id', ParseIntPipe) id: number,
     @Body('name') name: string,
     @Body('info') info: string,
     @Body('gender') gender: Gender,
@@ -93,7 +93,7 @@ export class MusicianController {
   @Delete(':id/delete-musician')
   @UseGuards(AuthGuard(), AdminAuthGuard)
   @Roles([Role.ADMIN])
-  deleteMusician(@Param('id', new ParseIntPipeValidationPipe()) id: number) {
+  deleteMusician(@Param('id', ParseIntPipe) id: number) {
     return this.musicianService.deleteMusician(id);
   }
 

@@ -2,31 +2,24 @@ import { BaseEntity, Column, Entity, JoinColumn, OneToOne, PrimaryGeneratedColum
 import { Gender } from '../../commons/enums/index.Enum';
 import { User } from '../auth/entities/user.entity';
 import { Favorite } from '../favorite/favorite.entity';
-import { IsDefined, IsString, IsNumber, IsOptional } from 'class-validator';
 
 @Entity('profiles')
 @Unique(['phone'])
 export class Profile extends BaseEntity {
-  @IsNumber()
   @PrimaryGeneratedColumn()
   id: number;
-  @IsDefined()
-  @IsString()
+
   @Column()
   firstName: string;
-  @IsDefined()
-  @IsString()
+
   @Column()
   lastName: string;
-  @IsOptional()
 
-  // @IsEnum(gender, { each: String })
   @Column({
     nullable: true
   })
   gender: Gender;
-  @IsNumber()
-  @IsDefined()
+
   @Column({
     nullable: true
   })
@@ -51,8 +44,6 @@ export class Profile extends BaseEntity {
     nullable: true
   })
   phone: string;
-
-  // IT OPTINLA     nullable: true
 
   @Column({
     nullable: true

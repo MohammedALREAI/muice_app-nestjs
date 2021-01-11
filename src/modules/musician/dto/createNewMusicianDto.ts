@@ -1,5 +1,6 @@
 import { Gender, ArtistType } from '../../../commons/enums/index.Enum';
 import { IsEnum, IsString, IsDefined } from 'class-validator';
+import { PartialType, PickType } from '@nestjs/mapped-types';
 export class CreateNewMusician {
 
   @IsString()
@@ -21,3 +22,9 @@ export class CreateNewMusician {
   image: any
 }
 
+
+
+export class CreateNewMusicianParams extends PickType(CreateNewMusician, ['name', 'nationality', 'info', 'type', 'gender']) {
+}
+
+export class UpdateNewMusician extends PartialType(CreateNewMusician) { }

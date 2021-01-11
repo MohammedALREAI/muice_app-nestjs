@@ -1,11 +1,11 @@
 import { EntityRepository, Repository, DeleteResult } from 'typeorm';
-import { AwsService } from '../../shared/modules/aws/aws.service';
 import { SingerAlbum } from './singer-album.entity';
 import { NotFoundException, BadRequestException } from '@nestjs/common';
 import { Song } from '../song/song.entity';
 import { CreateNewSongDto } from './dto/createNewSongDto';
 import { CreateAlbumDto } from './dto/create-album.dto';
 import { SongService } from '../song/song.service';
+import { AwsService } from '../aws/aws.service';
 
 
 //  when we will be used the  app  we need to injection it

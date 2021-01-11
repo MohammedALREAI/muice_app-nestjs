@@ -3,19 +3,14 @@ import { Room } from './room.entity';
 import { User } from '../../../../modules/auth/entities/user.entity';
 
 
-
-// this relation betwwen other
-// UserJoinedRoom
-// room: Room;
-// user: User;
-
-
 @Entity('users-joined-rooms')
 export class UserJoinedRoom extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ default: new Date() })
+  @Column({
+    default: new Date()
+  })
   joinedIn: Date;
 
   @Column()
@@ -25,17 +20,17 @@ export class UserJoinedRoom extends BaseEntity {
     eager: false
   })
   room: Room;
-  @Column()
-  roomId: number;
 
   @ManyToOne(type => User, user => user.userJoinedRooms, {
     eager: false
   })
   user: User;
 
+
+  // foreign keys
   @Column()
   userId: number;
 
-  // foreign keys
-
+  @Column()
+  roomId: number;
 }

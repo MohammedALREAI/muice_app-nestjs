@@ -3,21 +3,20 @@ import {
   Controller,
   Delete,
   Get,
-  Param,
+  Param, ParseIntPipe,
   Post,
   Put,
   UploadedFile,
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
-import { CreateAlbumDto } from '../singer-album/dto/create-album.dto';
+import { CreateAlbumDto } from '../../shared/dto/create-album.dto';
 import { MusicianAlbumService } from './musician-album.service';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { MusicType, Role } from '../../commons/enums/index.Enum';
 import { AuthGuard } from '@nestjs/passport';
 import { AdminAuthGuard } from '../../commons/guards/admin-auth.guard';
 import { Roles } from '../../commons/decorators/roles.decorator';
-import { ParseIntPipeValidationPipe } from '../../commons/Pipes/parseintpipevalidation.pipe';
+import { Role, MusicType } from '../../commons/enums/index.Enum';
 
 @Controller('musicians-albums')
 export class MusicianAlbumController {
@@ -28,7 +27,7 @@ export class MusicianAlbumController {
   }
 
   @Get(':id')
-  getMusicianAlbum(@Param('id', new ParseIntPipeValidationPipe()) id: number) {
+  getMusicianAlbum(@Param('id', ParseIntPipe) id: number) {
     return this.musicianAlbumService.getMusicianAlbumById(id);
   }
 
@@ -36,7 +35,7 @@ export class MusicianAlbumController {
   @UseGuards(AuthGuard(), AdminAuthGuard)
   @Roles([Role.ADMIN])
   @UseInterceptors(FileInterceptor('source'))
-  createNewMusic(@Param('id', new ParseIntPipeValidationPipe()) id: number,
+  createNewMusic(@Param('id', ParseIntPipe) id: number,
     @Body('name') name: string,
     @Body('description') description: string,
     @Body('artist') artist: string,
@@ -48,14 +47,14 @@ export class MusicianAlbumController {
   @Put(':id/update-album')
   @UseGuards(AuthGuard(), AdminAuthGuard)
   @Roles([Role.ADMIN])
-  updateAlbum(@Param('id', new ParseIntPipeValidationPipe()) id: number, @Body() createAlbumDto: CreateAlbumDto) {
+  updateAlbum(@Param('id', ParseIntPipe) id: number, @Body() createAlbumDto: CreateAlbumDto) {
     return this.musicianAlbumService.updateMusicianAlbum(id, createAlbumDto);
   }
 
   @Delete(':id/delete-album')
   @UseGuards(AuthGuard(), AdminAuthGuard)
   @Roles([Role.ADMIN])
-  deleteAlbum(@Param('id', new ParseIntPipeValidationPipe()) id: number) {
+  deleteAlbum(@Param('id', ParseIntPipe) id: number) {
     return this.musicianAlbumService.deleteMusicianAlbum(id);
   }
 }

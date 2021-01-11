@@ -1,46 +1,86 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { SingerAlbum } from './singer-album.entity';
-import { DeleteResult } from 'typeorm';
-import { CreateAlbumDto } from './dto/create-album.dto';
-import { SingerAlbumsRepository } from './singer-albums.repostory';
-import { CreateNewSongDto } from './dto/createNewSongDto';
-import { ISangerAlbum } from './interface/ISinger';
+import { DeleteResult, Repository } from 'typeorm';
+import { Song } from '../song/song.entity';
+import { SongType, SongLanguage } from '../../commons/enums/index.Enum';
+import { AwsService } from '../../shared/modules/aws/aws.service';
+import { CreateAlbumDto } from '../../shared/dto/create-album.dto';
+import { SongService } from '../song/song.service';
 
 @Injectable()
-export class SingerAlbumService implements ISangerAlbum {
+export class SingerAlbumService {
 
-  constructor(@InjectRepository(SingerAlbum) private singerAlbumRepository: SingerAlbumsRepository) {
+  constructor(@InjectRepository(SingerAlbum) private singerAlbumRepository: Repository<SingerAlbum>,
+    private awsService: AwsService,
+    private songService: SongService) {
   }
-
 
   async getAllSingerAlbums(): Promise<SingerAlbum[]> {
     return await this.singerAlbumRepository.find();
   }
 
   async getSingerAlbumById(id: number): Promise<SingerAlbum> {
-    return await this.singerAlbumRepository.getSingerAlbumById(id);
-
+    const singerAlbum = await this.singerAlbumRepository.findOne({
+      where: {
+        id,
+      },
+    });
+    if (!singerAlbum) {
+      throw new NotFoundException(`Singer Album with id ${id} does not found`);
+    }
+    return singerAlbum;
   }
 
-  async createNewSong(createNewSongDto: CreateNewSongDto) {
-    return await this.singerAlbumRepository.createNewSong(createNewSongDto)
-
+  async createNewSong(singerAlbumId: number, name: string,
+    description: string,
+    artist: string,
+    type: SongType,
+    language: SongLanguage,
+    source: any,
+  ): Promise<Song> {
+    const song = new Song();
+    const singerAlbum = await this.getSingerAlbumById(singerAlbumId);
+    song.name = name;
+    song.description = description;
+    song.artist = artist;
+    song.type = type;
+    song.language = language;
+    song.tempImage = singerAlbum.image;
+    song.source = await this.awsService.fileUpload(source, 'songs');
+    song.singerAlbum = singerAlbum;
+    const savedSong = await song.save();
+    return savedSong;
   }
 
   async updateSingerAlbum(id: number, createAlbumDto: CreateAlbumDto): Promise<SingerAlbum> {
-    return await this.singerAlbumRepository.updateSingerAlbum(id, createAlbumDto)
-
+    const singerAlbum = await this.getSingerAlbumById(id);
+    const { name } = createAlbumDto;
+    if (name) {
+      singerAlbum.name = name;
+    }
+    const savedSingerAlbum = await singerAlbum.save();
+    return savedSingerAlbum;
   }
 
   async deleteSingerAlbum(id: number): Promise<DeleteResult> {
-    return await this.singerAlbumRepository.deleteSingerAlbum(id)
-
+    const singerAlbum = await this.getSingerAlbumById(id);
+    for (let i = 0; i < singerAlbum.songs.length; i++) {
+      await this.songService.deleteSong(singerAlbum.songs[i].id);
+    }
+    const result = await this.singerAlbumRepository.delete(id);
+    if (result.affected === 0) {
+      throw new NotFoundException(`Singer Album with id ${id} does not found`);
+    }
+    return result;
   }
 
   async clearSingerAlbum(id: number): Promise<SingerAlbum> {
-    return await this.singerAlbumRepository.clearSingerAlbum(id)
-
-
+    const singerAlbum = await this.getSingerAlbumById(id);
+    for (let i = 0; i < singerAlbum.songs.length; i++) {
+      await this.songService.deleteSong(singerAlbum.songs[i].id);
+    }
+    singerAlbum.songs = [];
+    return await singerAlbum.save();
   }
 }

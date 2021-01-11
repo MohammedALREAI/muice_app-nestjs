@@ -3,13 +3,6 @@ import { User } from './user.entity';
 import { Music } from '../../music/music.entity';
 
 
-// user try login
-// count
-// user is used add colum is number try
-// status account
-// active ->
-//  user entry more the three time =>susspance account
-
 @EventSubscriber()
 export class NumberCountSubscriber implements EntitySubscriberInterface<User>{
   listenTo() {

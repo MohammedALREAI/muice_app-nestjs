@@ -1,35 +1,22 @@
+import { Roles } from './../../../commons/decorators/roles.decorator';
 import {
   Body,
   Controller,
   Delete,
   Get,
   Param,
-
+  ParseIntPipe,
   Post,
   Put,
   UseGuards,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { UserAuthGuard } from '../../../commons/guards/user-auth.guard';
-import { Roles } from '../../../commons/decorators/roles.decorator';
-import { Role } from '../../../commons/enums/index.Enum';
 import { GetAuthenticatedUser } from '../../../commons/decorators/get-authenticated-user.decorator';
 import { User } from '../../../modules/auth/entities/user.entity';
 import { RoomDto } from './dto/room.dto';
 import { ChatService } from './chat.service';
-import { ParseIntPipeValidationPipe } from '../../../commons/Pipes/parseintpipevalidation.pipe';
-
-
-
-
-
-
-
-// Api =>
-// /rooms =>get()
-// rooms:id=>get()
-// user - rooms=>get()
-// rooms=> post create
+import { Role } from '../../../commons/enums/index.Enum';
 
 
 @UseGuards(AuthGuard(), UserAuthGuard)
@@ -45,7 +32,7 @@ export class RoomController {
   }
 
   @Get(':id')
-  getRoomById(@Param('id', new ParseIntPipeValidationPipe()) id: number) {
+  getRoomById(@Param('id', ParseIntPipe) id: number) {
     return this.chatService.getRoomById(id);
   }
 
@@ -62,13 +49,13 @@ export class RoomController {
   }
 
   @Put(':id/edit-room')
-  updateRoom(@Param('id', new ParseIntPipeValidationPipe()) id: number,
+  updateRoom(@Param('id', ParseIntPipe) id: number,
     @Body() updateRoomDto: RoomDto) {
     return this.chatService.updateRoom(id, updateRoomDto);
   }
 
   @Delete(':id/delete-room')
-  deleteRoom(@Param('id', new ParseIntPipeValidationPipe()) id: number) {
+  deleteRoom(@Param('id', ParseIntPipe) id: number) {
     return this.chatService.deleteRoom(id);
   }
 

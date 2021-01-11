@@ -1,10 +1,10 @@
-import { Column, Entity, Unique } from 'typeorm';
-import { Shared } from '../../../commons/classes/abstract-shared';
+import { BaseEntity, Column, Entity, PrimaryGeneratedColumn, Unique } from 'typeorm';
 
 @Entity('verified-emails')
 @Unique(['email', 'emailToken'])
-export class EmailVerification extends Shared {
-
+export class EmailVerification extends BaseEntity{
+  @PrimaryGeneratedColumn()
+  id: number;
 
   @Column()
   email: string;
@@ -12,5 +12,6 @@ export class EmailVerification extends Shared {
   @Column()
   emailToken: string;
 
-
+  @Column()
+  timestamp: Date;
 }

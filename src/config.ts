@@ -1,13 +1,12 @@
 import { TypeOrmModuleOptions } from '@nestjs/typeorm';
 import { NodemailerOptions, NodemailerDrivers } from '@crowdlinker/nestjs-mailer';
-
 const db: TypeOrmModuleOptions = {
   name: 'default',
   type: 'postgres',
   host: process.env.DATABASE_HOST,
   port: Number(process.env.DATABASE_PORT),
-  username: process.env.DATABASE_USER,
-  password: process.env.DATABASE_PASSWORD,
+  username: "postgres",
+  password: "postgress",
   database: process.env.DATABASE_DB,
   synchronize: true,
   logging: true,
@@ -44,9 +43,9 @@ const cloudCon: ConfigOptions = {
 
 
 
-const AuthJwt = {
+export const AuthJwt = {
   secretKey: process.env.secretKey,
-  strategies: ['jwt','google','facebook'],
+  strategies: ['jwt', 'google', 'facebook'],
   expiresIn: process.env.expiresIn
 };
 
@@ -75,21 +74,30 @@ const frontEndKeys = {
 }
 
 
-const vapidKeys = {
-  publicKey: 'publicKey',
-  privateKey: 'privateKey'
+export const vapidKeys = {
+  publicKey:'BHmTKWgGxm9qDw6H324W_WYvCntCLVsh5ZquNHPa7sxiZFw4rOWDK-_vXq48xUbMdjhG0Cn5R-h3GP9kkpVzuQ4',
+  privateKey: 'NPmdY-Bxb0sYg3wXByR06ASusSsa8qJIg2n5T1PXPrU'
 }
+const CALL_BACK_URI = "http://localhost:3000/auth/google/callback"
+
+const api_secret = "tPdPzI6LPvRQPjr7tbiPrlTcpSU"
+const GOOGLE_CLIENT_ID = "186055676569-0o90qlq1u4dnhmfupj6f8j6pu2a68l5l.apps.googleusercontent.com"
+const GOOGLE_CLIENT_SECRET = "mCN6rFuOaGDpkH00mwHvFhV9"
 
 const oAuthGoogle = {
-  GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID,
-  GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET,
-  CALL_BACK_URI: process.env.CALL_BACK_URI,
+  GOOGLE_CLIENT_ID,
+  GOOGLE_CLIENT_SECRET,
+  CALL_BACK_URI,
   SCOPE: ['email', 'profile'],
+
 }
-const oAuthFacebook = {
-  FACEBOOK_CLIENT_ID: process.env.FACEBOOK_CLIENT_ID,
-  FACEBOOK_SECRET_ID: process.env.FACEBOOK_SECRET_ID,
-  CALL_BACK_URI: process.env.CALL_BACK_URI,
+const FACEBOOK_CLIENT_ID = "880132266126578"
+const FACEBOOK_SECRET_ID = "b060775fc2e0eb48841b2ca37c389249"
+
+export const oAuthFacebook = {
+  FACEBOOK_CLIENT_ID,
+  FACEBOOK_SECRET_ID,
+  CALL_BACK_URI,
   SCOPE: ['email'],
 }
 

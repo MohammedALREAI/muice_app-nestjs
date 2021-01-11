@@ -1,4 +1,4 @@
-import { Entity, OneToMany } from 'typeorm';
+import { Entity, OneToMany, Unique } from 'typeorm';
 import { AbstractArtist } from '../../commons/classes/abstract-artist';
 import { MusicianAlbum } from '../musician-album/musician-album.entity';
 

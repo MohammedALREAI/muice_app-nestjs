@@ -7,6 +7,7 @@ import {
   Post,
   Put,
   Req,
+  ParseIntPipe,
   Res,
   UseGuards,
 } from '@nestjs/common';
@@ -23,30 +24,18 @@ import { GetAuthenticatedUser } from '../../commons/decorators/get-authenticated
 import { User } from './entities/user.entity';
 import { AdminAuthGuard } from '../../commons/guards/admin-auth.guard';
 import { UserAuthGuard } from '../../commons/guards/user-auth.guard';
-import { ParseIntPipeValidationPipe } from '../../commons/Pipes/parseintpipevalidation.pipe';
-import { Response, Request } from 'express';
-// import { Crud } from '@nestjsx/crud'
-export type SignUpBody = AuthCredentialsDto & CreateProfileDto
 
 
-
-
-// @Crud({
-//   model: {
-//     type: User
-//   }
-
-// })
 @Controller('auth')
 export class AuthController {
 
   constructor(private authService: AuthService) {
   }
 
-
   @Post('register')
-  signUp(@Body() signUpBody: SignUpBody) {
-    return this.authService.signUp(signUpBody);
+  signUp(@Body('authCredentialsDto') authCredentialsDto: AuthCredentialsDto,
+    @Body('createProfileDto') createProfileDto: CreateProfileDto) {
+    return this.authService.signUp(authCredentialsDto, createProfileDto);
   }
 
   @Get('email/send-email-verification/:email')
@@ -65,20 +54,19 @@ export class AuthController {
 
   @Get('google')
   @UseGuards(AuthGuard('google'))
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
   googleLogin() {
-
+    console.log('dsd')
   }
 
   // related to callback --> redirection to frontend
   @Get('google/callback')
   @UseGuards(AuthGuard(['google']))
-  googleLoginCallback(@Req() req: Request, @Res() res: Response) {
-    const jwt = req.user.jwt;
-    const { id } = req.user
+  googleLoginCallback(@Req() req, @Res() res) {
+    const jwt: string = req.user.jwt;
+    const { id } = req.user.user;
     if (jwt) {
       res
-        .redirect(`http://localhost:4200/auth/google-success/userId:${id}/accessToken:${token}`);
+        .redirect(`http://localhost:4200/auth/google-success/userId:${id}/accessToken:${jwt}`);
     } else {
       res.redirect('http://localhost:4200/auth/google-failure');
     }
@@ -87,7 +75,7 @@ export class AuthController {
   @Get('facebook')
   @UseGuards(AuthGuard('facebook'))
   facebookLogin() {
-
+    console.log("done")
   }
 
   // related to callback --> redirection to frontend
@@ -154,14 +142,14 @@ export class AuthController {
   }
 
   @Get('users/:id')
-  getUserById(@Param('id', new ParseIntPipeValidationPipe()) id: number) {
+  getUserById(@Param('id', ParseIntPipe) id: number) {
     return this.authService.getUserById(id);
   }
 
   @Put('edit-user-roles/:userId')
   @UseGuards(AuthGuard(), AdminAuthGuard)
   @Roles([Role.ADMIN])
-  editUserRoles(@Param('userId', new ParseIntPipeValidationPipe()) userId: number, @Body() roles: Role[]) {
+  editUserRoles(@Param('userId', ParseIntPipe) userId: number, @Body() roles: Role[]) {
     return this.authService.editUserRoles(userId, roles);
   }
 

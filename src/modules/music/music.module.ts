@@ -8,13 +8,13 @@ import { FavoriteModule } from '../favorite/favorite.module';
 import { PassportModule } from '@nestjs/passport';
 import { PlaylistModule } from '../playlist/playlist.module';
 import { TrackModule } from '../track/track.module';
-import config from '../../config';
+import { AuthJwt } from '../../config';
 
 @Module({
   imports: [TypeOrmModule.forFeature([MusicRepository]),
   forwardRef(() => PlaylistModule), AwsModule, FavoriteModule,
   PassportModule.register({
-    defaultStrategy: config().AuthJwt.strategies,
+    defaultStrategy: AuthJwt.strategies[0],
   }), TrackModule],
   controllers: [MusicController],
   providers: [MusicService],

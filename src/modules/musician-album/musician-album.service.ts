@@ -2,16 +2,14 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DeleteResult, Repository } from 'typeorm';
 import { AwsService } from '../../shared/modules/aws/aws.service';
-import { CreateAlbumDto } from '../singer-album/dto/create-album.dto';
+import { CreateAlbumDto } from '../../shared/dto/create-album.dto';
 import { MusicianAlbum } from './musician-album.entity';
+import { MusicType } from '../../commons/enums/index.Enum';
 import { Music } from '../music/music.entity';
 import { MusicService } from '../music/music.service';
-import { MusicType } from '../../commons/enums/index.Enum';
-import { IMusicianAlbum } from './interface/IMusicianAlbum';
-import { CreateMusicDto } from './dto/createNewMusicDto';
 
 @Injectable()
-export class MusicianAlbumService implements IMusicianAlbum {
+export class MusicianAlbumService {
 
   constructor(@InjectRepository(MusicianAlbum) private musicianAlbumRepository: Repository<MusicianAlbum>,
     private awsService: AwsService,
@@ -34,22 +32,21 @@ export class MusicianAlbumService implements IMusicianAlbum {
     return musicianAlbum;
   }
 
-  async createNewMusic(createMusicDto: CreateMusicDto): Promise<Music> {
-    const { name, description, artist, musicianAlbumId, type, source } = createMusicDto
+  async createNewMusic(musicianAlbumId: number, name: string,
+    description: string,
+    artist: string,
+    type: MusicType,
+    source: any,
+  ): Promise<Music> {
+    const music = new Music();
     const musicianAlbum = await this.getMusicianAlbumById(musicianAlbumId);
-    const tempImage = musicianAlbum.image;
-    const mySource = await this.awsService.fileUpload(source, 'musics');
-
-    const music = {
-      name,
-      description,
-      artist,
-      type,
-      tempImage,
-      source: mySource,
-      musicianAlbum
-    } as Music
-
+    music.name = name;
+    music.description = description;
+    music.artist = artist;
+    music.type = type;
+    music.tempImage = musicianAlbum.image;
+    music.source = await this.awsService.fileUpload(source, 'musics');
+    music.musicianAlbum = musicianAlbum;
     const savedMusic = await music.save();
     return savedMusic;
   }

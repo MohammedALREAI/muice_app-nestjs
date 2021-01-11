@@ -1,6 +1,6 @@
 import { EntityRepository, Repository } from 'typeorm';
-import { Musician } from './musician.entity';
 import { Gender, ArtistType } from '../../commons/enums/index.Enum';
+import { Musician } from './musician.entity';
 
 
 @EntityRepository(Musician)
@@ -15,7 +15,7 @@ export class MusicianRepository extends Repository<Musician> {
   }
 
   async getFilteredMusicians(limit: number, nationality: string, type: ArtistType,
-                             gender: Gender): Promise<Musician[]> {
+    gender: Gender): Promise<Musician[]> {
     const query = this.createQueryBuilder('musician').select();
     if (limit) {
       query.limit(limit);

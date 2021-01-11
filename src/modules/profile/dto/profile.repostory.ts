@@ -1,10 +1,10 @@
 import { EntityRepository, Repository, } from 'typeorm';
 
 import { Profile } from '../profile.entity';
-import { AwsService } from '../../../shared/modules/aws/aws.service';
 import { User } from '../../auth/entities/user.entity';
 import { NotFoundException, InternalServerErrorException, BadRequestException, ConflictException } from '@nestjs/common';
 import { CreateProfileDto } from '../../auth/dto/create-profile.dto';
+import { AwsService } from '../../aws/aws.service';
 
 //  when we will be used the  app  we need to injection it
 // this is a provider

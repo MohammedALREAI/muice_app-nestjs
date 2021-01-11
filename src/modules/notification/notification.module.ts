@@ -6,13 +6,13 @@ import { SubscribersNotifications } from './entities/subscribers-notifications.e
 import { PassportModule } from '@nestjs/passport';
 import { NotificationController } from './notification.controller';
 import { NotificationService } from './notification.service';
-import config from '../../config';
+import { AuthJwt } from '../../config';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([NotificationEntity, Subscriber, SubscribersNotifications]),
     PassportModule.register({
-      defaultStrategy: config().AuthJwt.strategies,
+      defaultStrategy: AuthJwt.strategies[0],
     }),
   ],
   providers: [NotificationService],

@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Put, UseGuards } from '@nestjs/common';
 import { GetAuthenticatedUser } from '../../commons/decorators/get-authenticated-user.decorator';
 import { User } from '../auth/entities/user.entity';
 import { AuthGuard } from '@nestjs/passport';
@@ -7,7 +7,6 @@ import { Roles } from '../../commons/decorators/roles.decorator';
 import { Role } from '../../commons/enums/index.Enum';
 import { PlaylistDto } from './dto/playlist.dto';
 import { PlaylistService } from './playlist.service';
-import { ParseIntPipeValidationPipe } from '../../commons/Pipes/parseintpipevalidation.pipe';
 
 @UseGuards(AuthGuard(), UserAuthGuard)
 @Roles([Role.USER])
@@ -23,7 +22,7 @@ export class PlaylistController {
   }
 
   @Get(':id')
-  getPlaylist(@Param('id', new ParseIntPipeValidationPipe()) id: number) {
+  getPlaylist(@Param('id', ParseIntPipe) id: number) {
     return this.playlistService.getPlaylistById(id);
 
   }
@@ -34,26 +33,26 @@ export class PlaylistController {
   }
 
   @Put(':id/update-playlist')
-  updatePlaylist(@Param('id', new ParseIntPipeValidationPipe()) id: number, @Body() playlistDto: PlaylistDto) {
+  updatePlaylist(@Param('id', ParseIntPipe) id: number, @Body() playlistDto: PlaylistDto) {
     return this.playlistService.updatePlaylist(id, playlistDto);
 
   }
 
   @Delete(':id/delete-playlist')
-  deletePlaylist(@Param('id', new ParseIntPipeValidationPipe()) id: number) {
+  deletePlaylist(@Param('id', ParseIntPipe) id: number) {
     return this.playlistService.deletePlaylist(id);
   }
 
 
 
   @Delete(':id/clear-playlist')
-  clearPlaylistContent(@Param('id', new ParseIntPipeValidationPipe()) id: number) {
+  clearPlaylistContent(@Param('id', ParseIntPipe) id: number) {
     return this.playlistService.clearPlaylistContent(id);
   }
 
   @Delete(':playlistId/remove-track-from-playlist/:trackId')
-  removeTrackFromFavoriteList(@Param('playlistId', new ParseIntPipeValidationPipe()) playlistId: number,
-    @Param('trackId', new ParseIntPipeValidationPipe()) trackId: number) {
+  removeTrackFromFavoriteList(@Param('playlistId', ParseIntPipe) playlistId: number,
+    @Param('trackId', ParseIntPipe) trackId: number) {
     return this.playlistService.removeTrackFromPlaylist(playlistId, trackId);
 
   }

@@ -10,7 +10,7 @@ export const fileFilter = (req: Express.Request, file: any, callback) => {
 };
 
 type EditType = (req: Express.Request, file: any, callback: any) => void
-export const editFile = (req: Express.Request, file: any, callback): EditType => {
+export const editFile = (req: Express.Request, file: any, callback) => {
   const name = file.originalname.split('.')[0];
   const fileExtName = extname(file.originalname);
   const randomName = Math.random().toString(36).substr(2);

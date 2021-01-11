@@ -1,10 +1,10 @@
-import {  Column, Entity, Unique } from 'typeorm';
-import { Shared } from '../../../commons/classes/abstract-shared';
-
+import { BaseEntity, Column, Entity, PrimaryGeneratedColumn, Unique } from 'typeorm';
 
 @Entity('forgotten-passwords')
 @Unique(['email', 'newPasswordToken'])
-export class ForgottenPassword extends Shared {
+export class ForgottenPassword extends BaseEntity{
+  @PrimaryGeneratedColumn()
+  id: number;
 
   @Column()
   email: string;
@@ -12,5 +12,6 @@ export class ForgottenPassword extends Shared {
   @Column()
   newPasswordToken: string;
 
-
+  @Column()
+  timestamp: Date;
 }

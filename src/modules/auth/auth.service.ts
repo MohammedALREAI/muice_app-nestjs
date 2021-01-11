@@ -6,9 +6,10 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
+import { AuthCredentialsDto } from './dto/auth-credentials.dto';
 import { CreateProfileDto } from './dto/create-profile.dto';
 import { User } from './entities/user.entity';
+import * as bcrypt from 'bcryptjs';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserRepository } from './repositories/user.repository';
 import { Profile } from '../profile/profile.entity';
@@ -17,6 +18,7 @@ import { Role } from '../../commons/enums/index.Enum';
 import { EmailVerification } from './entities/email-verification.entity';
 import { Repository } from 'typeorm';
 import { Nodemailer, NodemailerDrivers } from '@crowdlinker/nestjs-mailer';
+import myconfig from '../../config';
 import { EmailLoginDto } from './dto/email-login.dto';
 import { JwtService } from '@nestjs/jwt';
 import { ForgottenPassword } from './entities/forgotten-password.entity';
@@ -26,11 +28,9 @@ import { FavoriteService } from '../favorite/favorite.service';
 import { PlaylistService } from '../playlist/playlist.service';
 import { ChatService } from '../../shared/modules/chat/chat.service';
 import { NotificationService } from '../notification/notification.service';
-import { SignUpBody } from './auth.controller';
-import { template } from '../../commons/helpers/Mail';
-import { IAuth } from './interface/IAuth';
+const config = myconfig()
 @Injectable()
-export class AuthService implements IAuth {
+export class AuthService {
   constructor(@InjectRepository(UserRepository) private userRepository: UserRepository,
     @InjectRepository(EmailVerification) private emailVerificationRepo: Repository<EmailVerification>,
     @InjectRepository(ForgottenPassword) private forgottenPasswordRepo: Repository<ForgottenPassword>,
@@ -40,43 +40,18 @@ export class AuthService implements IAuth {
     private favoriteService: FavoriteService,
     private playlistService: PlaylistService,
     private notificationService: NotificationService,
-    private configService: ConfigService,
     @Inject(forwardRef(() => ChatService)) private chatService: ChatService) {
   }
 
-
-
-
-  async signUp(signUpBody: SignUpBody): Promise<void> {
-    const { username,
-      password,
-      email,
-      firstName,
-      lastName,
-      age,
-      phone,
-      gender,
-      country,
-      city,
-      address,
-
-    } = signUpBody;
-    const profile = {
-      firstName,
-      lastName,
-      age,
-      phone,
-      gender,
-      country,
-      city,
-      address,
-    }
-    const isValid = this.userRepository.isValidEmail(email)
-    if (!isValid) {
+  async signUp(authCredentialsDto: AuthCredentialsDto,
+    createProfileDto: CreateProfileDto): Promise<void> {
+    const { username, password, email } = authCredentialsDto;
+    if (!this.isValidEmail(email)) {
       throw new BadRequestException('You have entered invalid email');
     }
     const user = new User();
-    const isFound_Mail = await this.userRepository.findByEmail(email)
+    user.salt = await bcrypt.genSalt();
+
     if ((await this.isValidUsername(username))) {
       throw new ConflictException(`Username ${username} is not available, please try another one`);
     } else {
@@ -90,8 +65,8 @@ export class AuthService implements IAuth {
     }
 
     user.roles = [Role.USER];
-    user.password = password;
-    user.profile = await this.createProfile(user, profile);
+    user.password = await this.userRepository.hashPassword(password, user.salt);
+    user.profile = await this.createProfile(user, createProfileDto);
     user.playlists = [];
     // sending emails verification
     await this.createEmailToken(email);
@@ -104,7 +79,7 @@ export class AuthService implements IAuth {
   /*                  Social Methods                   */
   async SignInGoogle(profile: any, googleId: string): Promise<{ user: User, jwt: string }> {
     const { emails } = profile;
-    let googleUser = {} as User;
+    let googleUser = new User();
     googleUser.googleId = googleId;
     googleUser = await this.setUserInfo(googleUser, profile);
     const jwt = this.generateJwtToken(emails[0].value);
@@ -136,7 +111,7 @@ export class AuthService implements IAuth {
     user.username = displayName;
     user.email = emails[0].value;
     user.roles = [Role.USER];
-    const newProfile = {} as Profile;
+    const newProfile = new Profile();
     newProfile.user = user;
     newProfile.firstName = name.givenName;
     newProfile.lastName = name.familyName;
@@ -148,21 +123,16 @@ export class AuthService implements IAuth {
   }
 
 
-  async getUserMainData(user: User): Promise<{ user: User, profile: Profile, favorite: Favorite }> {
+  async getUserMainData(user: User): Promise<{ user: User, profile: Profile }> {
     const profile = await this.profileService.getProfileData(user);
-    const favorite = await this.favoriteService.getUserFavoriteList(profile.favoriteId);
-
     return {
       user,
       profile,
-      favorite
     };
   }
 
   async signInUser(emailLoginDto: EmailLoginDto): Promise<{ token: string }> {
-    const isValid = this.userRepository.isValidEmail(emailLoginDto.email)
-
-    if (!isValid) {
+    if (!(await this.isValidEmail(emailLoginDto.email))) {
       throw new BadRequestException('Invalid Email Signature');
     }
     const { email, user } = await this.userRepository.validateUserPassword(emailLoginDto);
@@ -181,41 +151,42 @@ export class AuthService implements IAuth {
 
   // this method well be used in different methods
   generateJwtToken(email: string) {
-    const jwt = this.jwtService.sign(email);
+    const payload = { email };
+    const jwt = this.jwtService.sign(payload);
     return jwt;
   }
 
   async createProfile(user: User, createProfileDto: CreateProfileDto): Promise<Profile> {
-
-    const profile = {} as Profile
-    const favorite = await this.createFavoriteList(profile); // create a foreign key
-    const profile2 = await Profile.create({
-      ...createProfileDto,
-      user,
-      favorite: await this.createFavoriteList(profile)
-    }).save();
-
+    const {
+      firstName,
+      lastName,
+      age,
+      phone,
+      gender,
+      country,
+      city,
+      address,
+    }
+      = createProfileDto;
+    const profile = new Profile();
+    profile.firstName = firstName;
+    profile.lastName = lastName;
+    profile.phone = phone;
+    profile.gender = gender;
+    profile.age = age;
+    profile.country = country;
+    profile.city = city;
+    profile.address = address;
+    profile.user = user;
+    profile.favorite = await this.createFavoriteList(profile); // create a foreign key
     return await profile.save();
   }
 
   async createFavoriteList(profile: Profile): Promise<Favorite> {
-    const tracks = [];
-    try {
-      const favorite = await Favorite.create({
-        profile,
-        tracks
-
-      }).save();
-      if (favorite) {
-        return favorite
-
-      }
-    } catch (e) {
-
-
-    }
-
-    return
+    const favorite = new Favorite();
+    favorite.profile = profile;
+    favorite.tracks = [];
+    return await favorite.save();
   }
 
 
@@ -234,16 +205,19 @@ export class AuthService implements IAuth {
   }
 
   async sendEmailVerification(email: string): Promise<any> {
-    const { url, port, endpoints } = this.configService.get('frontEndKeys');
-    const { username } = this.configService.get("nodeMailerOptions").transport.auth
-
     const verifiedEmail = await this.emailVerificationRepo.findOne({ email });
     if (verifiedEmail && verifiedEmail.emailToken) {
-      const sendUrl = `<a style='text-decoration:none;'
-    href= http://${url}:${port}/${endpoints[1]}/${verifiedEmail.emailToken}>Click Here to confirm your email</a>`;
-      const op = template.VerifyEmail(username, verifiedEmail.email, sendUrl)
-
-      await this.nodeMailerService.sendMail(op).then(info => {
+      const url = `<a style='text-decoration:none;'
+    href= http://${config.frontEndKeys.url}:${config.frontEndKeys.port}/${config.frontEndKeys.endpoints[1]}/${verifiedEmail.emailToken}>Click Here to confirm your email</a>`;
+      await this.nodeMailerService.sendMail({
+        from: '"Company" <' + config.nodeMailerOptions.transport.auth.username + '>',
+        to: config.nodeMailerOptions.transport.auth.username,
+        subject: 'Verify Email',
+        text: 'Verify Email',
+        html: `<h1>Hi User</h1> <br><br> <h2>Thanks for your registration</h2>
+<h3>Please Verify Your Email by clicking the following link</h3><br><br>
+        ${url}`,
+      }).then(info => {
         console.log('Message sent: %s', info.messageId);
       }).catch(err => {
         console.log('Message sent: %s', err);
@@ -269,7 +243,13 @@ export class AuthService implements IAuth {
   }
 
 
-
+  isValidEmail(email: string) {
+    if (email) {
+      const pattern = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+      return pattern.test(email);
+    } else
+      return false;
+  }
 
 
   async sendEmailForgottenPassword(email: string): Promise<any> {
@@ -279,14 +259,17 @@ export class AuthService implements IAuth {
     }
     const tokenModel = await this.createForgottenPasswordToken(email);
     if (tokenModel && tokenModel.newPasswordToken) {
-      const { url, port, endpoints
-      } = this.configService.get('frontEndKeys')
-      const { username } = this.configService.get("nodeMailerOptions").transport.auth
-
-      const sendUrl = `<a style='text-decoration:none;'
-    href= http://${url}:${port}/${endpoints[0]}/${tokenModel.newPasswordToken}>Click here to reset your password</a>`;
-      const op = template.ResetPassword(username, email, sendUrl)
-      return await this.nodeMailerService.sendMail(op).then(info => {
+      const url = `<a style='text-decoration:none;'
+    href= http://${config.frontEndKeys.url}:${config.frontEndKeys.port}/${config.frontEndKeys.endpoints[0]}/${tokenModel.newPasswordToken}>Click here to reset your password</a>`;
+      return await this.nodeMailerService.sendMail({
+        from: '"Company" <' + config.nodeMailerOptions.transport.auth.username + '>',
+        to: email,
+        subject: 'Reset Your Password',
+        text: 'Reset Your Password',
+        html: `<h1>Hi User</h1> <br><br> <h2>You have requested to reset your password , please click the following link to change your password</h2>
+     <h3>Please click the following link</h3><br><br>
+        ${url}`,
+      }).then(info => {
         console.log('Message sent: %s', info.messageId);
       }).catch(err => {
         console.log('Message sent: %s', err);
@@ -312,7 +295,7 @@ export class AuthService implements IAuth {
     if (!user) {
       throw new HttpException('User Does not Found', HttpStatus.NOT_FOUND);
     }
-    return await this.userRepository.comparePassword(password);
+    return await bcrypt.compare(password, user.password);
   }
 
   async setNewPassword(resetPasswordDto: ResetPasswordDto) {
@@ -342,19 +325,18 @@ export class AuthService implements IAuth {
     if (!user) {
       throw new HttpException('LOGIN_USER_NOT_FOUND', HttpStatus.NOT_FOUND);
     }
-    user.password = newPassword
+    user.password = await this.userRepository.hashPassword(newPassword, user.salt);
     await user.save();
     return true;
   }
 
   async signInAdmin(emailLoginDto: EmailLoginDto): Promise<{ accessToken: string, user: User }> {
-    const isValid = this.userRepository.isValidEmail(emailLoginDto.email)
-
-    if (!isValid) {
+    if (!(await this.isValidEmail(emailLoginDto.email))) {
       throw new BadRequestException('Invalid Email Signature');
     }
     const { email, user } = await this.userRepository.validateAdminPassword(emailLoginDto);
-    const accessToken = this.jwtService.sign(email);
+    const payload = { email };
+    const accessToken = this.jwtService.sign(payload);
     return { accessToken, user };
   }
 

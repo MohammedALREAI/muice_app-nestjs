@@ -1,4 +1,5 @@
-import { Injectable } from '@nestjs/common';
+import { SongLanguage, SongType } from './../../commons/enums/index.Enum';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { SongRepository } from './song.repository';
 import { Song } from './song.entity';
@@ -8,12 +9,9 @@ import { FavoriteService } from '../favorite/favorite.service';
 import { Track } from '../track/track.entity';
 import { PlaylistService } from '../playlist/playlist.service';
 import { TrackService } from '../track/track.service';
-import { updateSongType } from './dto/updateSongDto';
-import { GetFilteredSongDto } from './dto/getFilteredSongDto';
-import { ISong } from './interface/ISong';
 
 @Injectable()
-export class SongService implements ISong {
+export class SongService {
   constructor(@InjectRepository(SongRepository) private songRepository: SongRepository,
     private awsService: AwsService,
     private favService: FavoriteService,
@@ -22,44 +20,81 @@ export class SongService implements ISong {
   }
 
   async getAllSongs(): Promise<Song[]> {
-    return await this.songRepository.getAllSongs()
+    return await this.songRepository.find();
   }
 
   async getSongById(id: number): Promise<Song> {
-    return await this.songRepository.getSongById(id)
-
+    const song = await this.songRepository.findOne({
+      where: {
+        id,
+      },
+    });
+    if (!song) {
+      throw new NotFoundException(`Song with id ${id} does not found`);
+    }
+    return song;
   }
 
-  async getFilteredSong(getFilteredSongDto: GetFilteredSongDto): Promise<Song[]> {
-    return await this.songRepository.getFilteredSong(getFilteredSongDto)
-
+  async getFilteredSong(limit: number,
+    type: SongType, language: SongLanguage, rate: number): Promise<Song[]> {
+    return await this.songRepository.getFilteredSongs(limit, type, language, rate);
   }
 
   async getLimitedSongs(limit: number): Promise<Song[]> {
-    return await this.songRepository.getLimitedSongs(limit)
-
+    return await this.songRepository.getLimitedSongs(limit);
   }
 
-  async updateSong(data: updateSongType): Promise<Song> {
-    return await this.songRepository.updateSong(data)
-
+  async updateSong(id: number, name: string, description: string,
+    artist: string, type: SongType, language: SongLanguage, source: any): Promise<Song> {
+    const song = await this.getSongById(id);
+    if (name) {
+      song.name = name;
+    }
+    if (description) {
+      song.description = description;
+    }
+    if (artist) {
+      song.artist = artist;
+    }
+    if (type) {
+      song.type = type;
+    }
+    if (language) {
+      song.language = language;
+    }
+    if (source) {
+      await this.awsService.fileDelete(song.source);
+      song.source = await this.awsService.fileUpload(source, 'songs');
+    }
+    const updatedSong = await song.save();
+    return updatedSong;
   }
 
   async deleteSong(id: number): Promise<DeleteResult> {
-    return await this.songRepository.deleteSong(id)
-
+    const song = await this.getSongById(id);
+    for (let i = 0; i < song.tracks.length; i++) {
+      await this.trackService.deleteTrack(song.tracks[i].id);
+    }
+    if (song.source) {
+      await this.awsService.fileDelete(song.source);
+    }
+    const result = await this.songRepository.delete(id);
+    if (result.affected === 0) {
+      throw new NotFoundException(`Song with id ${id} does not found`);
+    }
+    return result;
   }
 
   async pushToFavoriteList(songId: number, favoriteListId: number): Promise<Track> {
-    return await this.songRepository.pushToFavoriteList(songId, favoriteListId)
-
-
+    const song = await this.getSongById(songId);
+    const track = await this.favService.createFavoriteTrack(song, null, favoriteListId);
+    return track;
   }
 
   async pushToPlaylist(songId: number, playlistId: number): Promise<Track> {
-    return await this.songRepository.pushToPlaylist(songId, playlistId)
-
-
+    const song = await this.getSongById(songId);
+    const track = await this.playlistService.createPlaylistTrack(song, null, playlistId);
+    return track;
   }
 
 
