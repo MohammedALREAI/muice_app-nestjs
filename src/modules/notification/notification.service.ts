@@ -5,7 +5,7 @@ import { Subscriber } from './entities/subscriber.entity';
 import { Repository } from 'typeorm';
 import { SubscribersNotifications } from './entities/subscribers-notifications.entity';
 import { User } from '../auth/entities/user.entity';
-import { NotificationPayloadDto } from './notification-payload.dto';
+import {NotificationPayloadDto} from'././dto/notification-payload.dto'
 import { NotificationPayload } from './classes/notification-payload';
 import { Notification } from './classes/notification';
 import { NotificationData } from './classes/notification-data';

@@ -25,7 +25,6 @@ import {
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
-import { ApiFile } from '../../commons/ApiFile.d';
 import { MusicianAlbumService } from './musician-album.service';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { AuthGuard } from '@nestjs/passport';
@@ -106,7 +105,6 @@ export class MusicianAlbumController {
   @Post(':id/new-music')
   @UseGuards(AuthGuard(), AdminAuthGuard)
   @Roles([Role.ADMIN])
-  @ApiFile('source')
   @UseInterceptors(FileInterceptor('source'))
   createNewMusic(
     @Param('id', ParseIntPipe) { id }: GetByIdDto,
@@ -144,7 +142,6 @@ export class MusicianAlbumController {
   @Post(':id/new-music')
   @UseGuards(AuthGuard(), AdminAuthGuard)
   @Roles([Role.ADMIN])
-  @ApiFile('source')
   @UseInterceptors(FileInterceptor('source'))
   updateAlbum(
     @Param('id', ParseIntPipe) { id }: GetByIdDto,

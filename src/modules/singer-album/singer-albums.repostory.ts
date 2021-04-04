@@ -47,7 +47,7 @@ export class SingerAlbumsRepository extends Repository<SingerAlbum> {
     }
   }
 
-  async createNewSong(createNewSongDto: CreateNewSongDto): Promise<Song> {
+  async createNewSong(createNewSongDto: CreateNewSongDto ,source:any): Promise<Song> {
     const {
       artist,
       description,
@@ -55,7 +55,7 @@ export class SingerAlbumsRepository extends Repository<SingerAlbum> {
       name,
       singerAlbumId,
       type,
-      source,
+      
     } = createNewSongDto;
     const song = new Song();
     try {
