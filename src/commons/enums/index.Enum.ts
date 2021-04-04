@@ -1,10 +1,10 @@
 export enum ArtistType {
   SINGLE = 'SINGLE',
-  MUSIC_BAND = 'MUSIC_BAND'
+  MUSIC_BAND = 'MUSIC_BAND',
 }
 export enum Gender {
   MALE = 'MALE',
-  FEMALE = 'FEMALE'
+  FEMALE = 'FEMALE',
 }
 export enum MusicType {
   PIANO = 'PIANO',
@@ -21,18 +21,17 @@ export enum MusicType {
   CLARINET = 'CLARINET',
   TRUMPET = 'TRUMPET',
   HARP = 'HARP',
-  MIX = 'MIX'
+  MIX = 'MIX',
 }
 
 export enum Provider {
   GOOGLE = 'GOOGLE',
-  FACEBOOK = 'FACEBOOK'
+  FACEBOOK = 'FACEBOOK',
 }
 export enum Role {
   ADMIN = 'ADMIN',
-  USER = 'USER'
+  USER = 'USER',
 }
-
 
 export enum SongLanguage {
   ENGLISH = 'ENGLISH',
@@ -41,7 +40,7 @@ export enum SongLanguage {
   TURKISH = 'TURKISH',
   SPANISH = 'SPANISH',
   ITALIC = 'ITALIC',
-  LATINA = 'LATINA'
+  LATINA = 'LATINA',
 }
 export enum SongType {
   CLASSICAL = 'CLASSICAL',
@@ -53,5 +52,5 @@ export enum SongType {
   BALLADS = 'BALLADS',
   DANCE = 'DANCE',
   LOVE = 'LOVE',
-  GOSPEL = 'GOSPEL'
+  GOSPEL = 'GOSPEL',
 }

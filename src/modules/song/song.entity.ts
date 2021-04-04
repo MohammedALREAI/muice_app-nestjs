@@ -8,29 +8,36 @@ import { SongType } from '../../commons/enums/index.Enum';
 @Entity('songs')
 @Unique(['name', 'source'])
 export class Song extends AbstractMusic {
-
   @Column({
     type: 'enum',
     enum: SongType,
-    array: false
+    array: false,
   })
   type: SongType;
 
   @Column({
     type: 'enum',
     enum: SongLanguage,
-    array: false
+    array: false,
   })
   language: SongLanguage;
 
-  @ManyToOne(type => SingerAlbum, singerAlbum => singerAlbum.songs, {
-    eager: false
-  })
+  @ManyToOne(
+    type => SingerAlbum,
+    singerAlbum => singerAlbum.songs,
+    {
+      eager: false,
+    },
+  )
   singerAlbum: SingerAlbum;
 
-  @OneToMany(type => Track, track => track.playlist, {
-    eager: true
-  })
+  @OneToMany(
+    type => Track,
+    track => track.playlist,
+    {
+      eager: true,
+    },
+  )
   tracks: Track[];
 
   // Foreign Key

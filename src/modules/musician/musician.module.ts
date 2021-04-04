@@ -9,12 +9,15 @@ import { MusicianAlbumModule } from '../musician-album/musician-album.module';
 import { AuthJwt } from '../../config';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([MusicianRepository]),
-  PassportModule.register({
-    defaultStrategy: AuthJwt.strategies[0],
-  }), AwsModule, MusicianAlbumModule],
+  imports: [
+    TypeOrmModule.forFeature([MusicianRepository]),
+    PassportModule.register({
+      defaultStrategy: AuthJwt.strategies[0],
+    }),
+    AwsModule,
+    MusicianAlbumModule,
+  ],
   controllers: [MusicianController],
   providers: [MusicianService],
 })
-export class MusicianModule {
-}
+export class MusicianModule {}

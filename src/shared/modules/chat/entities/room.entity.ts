@@ -1,7 +1,12 @@
-import { BaseEntity, Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  BaseEntity,
+  Column,
+  Entity,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { Message } from './message.entity';
 import { UserJoinedRoom } from './user-joined-room.entity';
-
 
 @Entity('rooms')
 export class Room extends BaseEntity {
@@ -19,14 +24,21 @@ export class Room extends BaseEntity {
   @Column()
   createdBy: string;
 
-  @OneToMany(type => Message, message => message.room, {
-    eager: true
-  })
+  @OneToMany(
+    type => Message,
+    message => message.room,
+    {
+      eager: true,
+    },
+  )
   messages: Message[];
 
-  @OneToMany(type => UserJoinedRoom,
-      userJoinedRoom => userJoinedRoom.room, {
-    eager: true
-  })
+  @OneToMany(
+    type => UserJoinedRoom,
+    userJoinedRoom => userJoinedRoom.room,
+    {
+      eager: true,
+    },
+  )
   userJoinedRooms: UserJoinedRoom[];
 }

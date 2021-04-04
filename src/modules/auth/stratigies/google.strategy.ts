@@ -5,10 +5,13 @@ import myconfig from '../../../config';
 import { UserRepository } from '../repositories/user.repository';
 import { AuthService } from '../auth.service';
 
-const config = myconfig()
+const config = myconfig();
 @Injectable()
 export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
-  constructor(private userRepository: UserRepository, private authService: AuthService) {
+  constructor(
+    private userRepository: UserRepository,
+    private authService: AuthService,
+  ) {
     super({
       clientID: config.oAuthGoogle.GOOGLE_CLIENT_ID,
       clientSecret: config.oAuthGoogle.GOOGLE_CLIENT_SECRET,
@@ -18,8 +21,13 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
     });
   }
 
-  async validate(request: any, accessToken: string,
-    refreshToken: string, profile: any, done: any) {
+  async validate(
+    request: any,
+    accessToken: string,
+    refreshToken: string,
+    profile: any,
+    done: any,
+  ) {
     // check if the user exist on the database or not
     const { id } = profile;
     const user = await this.userRepository.findOne({
@@ -36,5 +44,4 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
       done(null, { user, jwt });
     }
   }
-
 }

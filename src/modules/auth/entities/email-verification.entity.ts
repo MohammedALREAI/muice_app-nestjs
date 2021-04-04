@@ -1,8 +1,14 @@
-import { BaseEntity, Column, Entity, PrimaryGeneratedColumn, Unique } from 'typeorm';
+import {
+  BaseEntity,
+  Column,
+  Entity,
+  PrimaryGeneratedColumn,
+  Unique,
+} from 'typeorm';
 
 @Entity('verified-emails')
 @Unique(['email', 'emailToken'])
-export class EmailVerification extends BaseEntity{
+export class EmailVerification extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 

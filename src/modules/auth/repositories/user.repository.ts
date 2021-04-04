@@ -1,6 +1,11 @@
 import { EntityRepository, Repository } from 'typeorm';
 import { User } from '../entities/user.entity';
-import { BadRequestException, ForbiddenException, ConflictException, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  ForbiddenException,
+  ConflictException,
+  NotFoundException,
+} from '@nestjs/common';
 import { Role } from '../../../commons/enums/index.Enum';
 import { EmailLoginDto } from '../dto/email-login.dto';
 import * as bcrypt from 'bcryptjs';
@@ -15,7 +20,9 @@ export class UserRepository extends Repository<User> {
     return await this.findOne({ username });
   }
 
-  async validateUserPassword(emailLoginDto: EmailLoginDto): Promise<{ email: string, user: User }> {
+  async validateUserPassword(
+    emailLoginDto: EmailLoginDto,
+  ): Promise<{ email: string; user: User }> {
     const { email, password } = emailLoginDto;
     const user = await this.findByEmail(email);
     if (!user) {
@@ -27,10 +34,12 @@ export class UserRepository extends Repository<User> {
       use the google or facebook gateways to login`;
       throw new ConflictException(errMessage, errMessage);
     }
-    if ((await user.validatePassword(password))) {
+    if (await user.validatePassword(password)) {
       return { email, user };
     } else {
-      throw new BadRequestException('Your Password in incorrect, please enter another one');
+      throw new BadRequestException(
+        'Your Password in incorrect, please enter another one',
+      );
     }
   }
 
@@ -47,7 +56,9 @@ export class UserRepository extends Repository<User> {
     if (user && (await user.validatePassword(password))) {
       return { email, user };
     } else {
-      throw new BadRequestException('Your Password in incorrect, please enter another one');
+      throw new BadRequestException(
+        'Your Password in incorrect, please enter another one',
+      );
     }
   }
 

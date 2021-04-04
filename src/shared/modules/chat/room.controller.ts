@@ -18,13 +18,11 @@ import { RoomDto } from './dto/room.dto';
 import { ChatService } from './chat.service';
 import { Role } from '../../../commons/enums/index.Enum';
 
-
 @UseGuards(AuthGuard(), UserAuthGuard)
 @Roles([Role.USER])
 @Controller('rooms')
 export class RoomController {
-  constructor(private chatService: ChatService) {
-  }
+  constructor(private chatService: ChatService) {}
 
   @Get()
   getAllRooms() {
@@ -36,21 +34,24 @@ export class RoomController {
     return this.chatService.getRoomById(id);
   }
 
-
   @Get('user-rooms')
   getUserRooms(@GetAuthenticatedUser() user: User) {
     return this.chatService.getUserRooms(user);
   }
 
   @Post()
-  createNewRoom(@GetAuthenticatedUser() user: User,
-    @Body() createRoomDto: RoomDto) {
+  createNewRoom(
+    @GetAuthenticatedUser() user: User,
+    @Body() createRoomDto: RoomDto,
+  ) {
     return this.chatService.createNewRoom(user, createRoomDto);
   }
 
   @Put(':id/edit-room')
-  updateRoom(@Param('id', ParseIntPipe) id: number,
-    @Body() updateRoomDto: RoomDto) {
+  updateRoom(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() updateRoomDto: RoomDto,
+  ) {
     return this.chatService.updateRoom(id, updateRoomDto);
   }
 
@@ -58,6 +59,4 @@ export class RoomController {
   deleteRoom(@Param('id', ParseIntPipe) id: number) {
     return this.chatService.deleteRoom(id);
   }
-
-
 }

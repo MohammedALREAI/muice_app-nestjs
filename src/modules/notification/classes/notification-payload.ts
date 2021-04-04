@@ -1,5 +1,5 @@
-import {Notification} from './notification';
+import { Notification } from './notification';
 
 export class NotificationPayload {
-  notification: Notification
+  notification: Notification;
 }

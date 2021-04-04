@@ -11,14 +11,15 @@ import { ChatGateway } from './chat.gateway';
 import { AuthJwt } from '../../../config';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Room, Message, UserJoinedRoom]),
-  PassportModule.register({
-    defaultStrategy: AuthJwt.strategies[0],
-  }),
-  forwardRef(() => AuthModule)],
+  imports: [
+    TypeOrmModule.forFeature([Room, Message, UserJoinedRoom]),
+    PassportModule.register({
+      defaultStrategy: AuthJwt.strategies[0],
+    }),
+    forwardRef(() => AuthModule),
+  ],
   providers: [ChatGateway, ChatService],
   controllers: [RoomController],
   exports: [ChatService],
 })
-export class ChatModule {
-}
+export class ChatModule {}

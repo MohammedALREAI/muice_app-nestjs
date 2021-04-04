@@ -7,54 +7,56 @@ import { CreateAlbumDto } from './dto/create-album.dto';
 import { SongService } from '../song/song.service';
 import { AwsService } from '../aws/aws.service';
 
-
 //  when we will be used the  app  we need to injection it
 // this is a provider
 @EntityRepository(SingerAlbum)
 export class SingerAlbumsRepository extends Repository<SingerAlbum> {
-
-  constructor(private awsService: AwsService,
-    private songService: SongService) {
-    super()
+  constructor(
+    private awsService: AwsService,
+    private songService: SongService,
+  ) {
+    super();
   }
 
   async getAllSingerAlbums(): Promise<SingerAlbum[]> {
-
     try {
       const res = await this.find();
       if (!res) {
-        throw new NotFoundException('the singerRepository not found any items ')
-
-
+        throw new NotFoundException(
+          'the singerRepository not found any items ',
+        );
       }
 
       return res;
-
     } catch (e) {
-      throw new BadRequestException(`there are some error ${e}`)
-
-
+      throw new BadRequestException(`there are some error ${e}`);
     }
   }
 
   async getSingerAlbumById(id: number): Promise<SingerAlbum> {
-
     try {
       const singerAlbum = await this.findOne({ id });
       if (!singerAlbum) {
-        throw new NotFoundException(`Singer Album with id ${id} does not found`);
+        throw new NotFoundException(
+          `Singer Album with id ${id} does not found`,
+        );
       }
       return singerAlbum;
-
     } catch (e) {
-      throw new BadRequestException(`there are some error ${e}`)
-
-
+      throw new BadRequestException(`there are some error ${e}`);
     }
   }
 
   async createNewSong(createNewSongDto: CreateNewSongDto): Promise<Song> {
-    const { artist, description, language, name, singerAlbumId, type, source } = createNewSongDto
+    const {
+      artist,
+      description,
+      language,
+      name,
+      singerAlbumId,
+      type,
+      source,
+    } = createNewSongDto;
     const song = new Song();
     try {
       const singerAlbum = await this.getSingerAlbumById(singerAlbumId);
@@ -68,15 +70,15 @@ export class SingerAlbumsRepository extends Repository<SingerAlbum> {
       song.singerAlbum = singerAlbum;
       const savedSong = await song.save();
       return savedSong;
-
     } catch (e) {
-      throw new BadRequestException(`there are some error ${e}`)
+      throw new BadRequestException(`there are some error ${e}`);
     }
-
   }
 
-  async updateSingerAlbum(id: number, createAlbumDto: CreateAlbumDto): Promise<SingerAlbum> {
-
+  async updateSingerAlbum(
+    id: number,
+    createAlbumDto: CreateAlbumDto,
+  ): Promise<SingerAlbum> {
     const singerAlbum = await this.getSingerAlbumById(id);
     const { name } = createAlbumDto;
     if (name) {
@@ -106,10 +108,4 @@ export class SingerAlbumsRepository extends Repository<SingerAlbum> {
     singerAlbum.songs = [];
     return await singerAlbum.save();
   }
-
-
-
-
-
-
 }

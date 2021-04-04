@@ -2,7 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { Playlist } from './playlist.entity';
 import { User } from '../auth/entities/user.entity';
 import { PlaylistRepository } from './playlist.repository';
-import { PlaylistDto } from './dto/playlist.dto';
+import { PlaylistDto, UpdatePlayListDto } from './dto/playlist.dto';
 import { DeleteResult } from 'typeorm';
 import { Song } from '../song/song.entity';
 import { Music } from '../music/music.entity';
@@ -10,10 +10,10 @@ import { TrackService } from '../track/track.service';
 
 @Injectable()
 export class PlaylistService {
-
-  constructor(private playlistRepository: PlaylistRepository,
-              private trackService: TrackService) {
-  }
+  constructor(
+    private playlistRepository: PlaylistRepository,
+    private trackService: TrackService,
+  ) {}
 
   async getUserPlaylists(user: User): Promise<Playlist[]> {
     return await this.playlistRepository.getUserPlaylists(user.id);
@@ -40,7 +40,10 @@ export class PlaylistService {
     return await playlist.save();
   }
 
-  async updatePlaylist(id: number, playlistDto: PlaylistDto): Promise<Playlist> {
+  async updatePlaylist(
+    id: number,
+    playlistDto: UpdatePlayListDto,
+  ): Promise<Playlist> {
     const { name } = playlistDto;
     const playlist = await this.getPlaylistById(id);
     if (name) {
@@ -58,7 +61,7 @@ export class PlaylistService {
     return result;
   }
 
-  async clearPlaylistContent(id: number): Promise<Playlist>{
+  async clearPlaylistContent(id: number): Promise<Playlist> {
     const playlist = await this.getPlaylistById(id);
     for (let i = 0; i < playlist.tracks.length; i++) {
       await this.trackService.deleteTrack(playlist.tracks[i].id);
@@ -67,10 +70,13 @@ export class PlaylistService {
     return await playlist.save();
   }
 
-  async removeTrackFromPlaylist(playlistId: number, trackId: number): Promise<Playlist>{
+  async removeTrackFromPlaylist(
+    playlistId: number,
+    trackId: number,
+  ): Promise<Playlist> {
     const playlist = await this.getPlaylistById(playlistId);
     for (let i = 0; i < playlist.tracks.length; i++) {
-      if(playlist.tracks[i].id === trackId){
+      if (playlist.tracks[i].id === trackId) {
         await this.trackService.deleteTrack(trackId);
         playlist.tracks.splice(i, 1);
         break;

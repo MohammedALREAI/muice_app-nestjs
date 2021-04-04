@@ -31,7 +31,6 @@ export abstract class AbstractArtist extends BaseEntity {
   type: ArtistType;
 
   @IsEnum(Gender, { each: false })
-
   @Column({
     type: 'enum',
     enum: Gender,
@@ -43,5 +42,4 @@ export abstract class AbstractArtist extends BaseEntity {
   @IsString()
   @IsDefined()
   nationality: string;
-
 }

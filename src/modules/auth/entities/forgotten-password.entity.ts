@@ -1,8 +1,14 @@
-import { BaseEntity, Column, Entity, PrimaryGeneratedColumn, Unique } from 'typeorm';
+import {
+  BaseEntity,
+  Column,
+  Entity,
+  PrimaryGeneratedColumn,
+  Unique,
+} from 'typeorm';
 
 @Entity('forgotten-passwords')
 @Unique(['email', 'newPasswordToken'])
-export class ForgottenPassword extends BaseEntity{
+export class ForgottenPassword extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 

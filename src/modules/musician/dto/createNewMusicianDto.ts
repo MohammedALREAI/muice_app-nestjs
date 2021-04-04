@@ -3,40 +3,52 @@ import { IsEnum, IsString, IsDefined } from 'class-validator';
 import { PartialType, PickType } from '@nestjs/mapped-types';
 import { ApiProperty } from '@nestjs/swagger';
 export class CreateNewMusician {
-
-  @ApiProperty()
+  @ApiProperty({
+    name: 'name',
+    description: ' name of Musions',
+    type: 'string',
+  })
   @IsString()
   @IsDefined()
-  name: string
+  name: string;
 
-  @ApiProperty()
+  @ApiProperty({
+    name: 'info',
+    description: ' info of Musions',
+    type: 'string',
+  })
   @IsString()
   @IsDefined()
+  info: string;
 
-  @ApiProperty()
-  info: string
+  @ApiProperty({
+    name: 'gender',
+    description: ' gender of Musions',
+    enum: Gender,
+  })
   @IsEnum(Gender, { each: false })
-  @ApiProperty()
-  gender: Gender
+  gender: Gender;
+
   @IsEnum(ArtistType, { each: false })
-
-
   @ApiProperty()
-  type: ArtistType
+  type: ArtistType;
+
   @IsString()
   @IsDefined()
-
-  @ApiProperty()
-  nationality: string
-  @IsDefined()
-
-  @ApiProperty()
-  image: any
+  @ApiProperty({
+    name: 'nationality',
+    description: ' info of Musions',
+    type: 'string',
+  })
+  nationality: string;
 }
 
+export class CreateNewMusicianParams extends PickType(CreateNewMusician, [
+  'name',
+  'nationality',
+  'info',
+  'type',
+  'gender',
+]) {}
 
-
-export class CreateNewMusicianParams extends PickType(CreateNewMusician, ['name', 'nationality', 'info', 'type', 'gender']) {
-}
-
-export class UpdateNewMusician extends PartialType(CreateNewMusician) { }
+export class UpdateNewMusician extends PartialType(CreateNewMusician) {}

@@ -1,5 +1,5 @@
 import { BaseEntity, Column, PrimaryGeneratedColumn } from 'typeorm';
-import { IsNumber, IsDefined, IsString } from 'class-validator'
+import { IsNumber, IsDefined, IsString } from 'class-validator';
 export abstract class AbstractAlbum extends BaseEntity {
   @PrimaryGeneratedColumn()
   @IsNumber()
@@ -15,6 +15,4 @@ export abstract class AbstractAlbum extends BaseEntity {
   @IsString()
   @IsDefined()
   image: string;
-
-
 }

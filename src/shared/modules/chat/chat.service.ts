@@ -1,4 +1,4 @@
-import {Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Room } from './entities/room.entity';
 import { Repository } from 'typeorm';
@@ -7,16 +7,14 @@ import { UserJoinedRoom } from './entities/user-joined-room.entity';
 import { User } from '../../../modules/auth/entities/user.entity';
 import { RoomDto } from './dto/room.dto';
 
-
 @Injectable()
 export class ChatService {
   constructor(
     @InjectRepository(Message) private messageRepository: Repository<Message>,
     @InjectRepository(Room) private roomRepository: Repository<Room>,
-    @InjectRepository(UserJoinedRoom) private userJoinedRoomRepository: Repository<UserJoinedRoom>) {
-
-  }
-
+    @InjectRepository(UserJoinedRoom)
+    private userJoinedRoomRepository: Repository<UserJoinedRoom>,
+  ) {}
 
   async getAllRooms() {
     return this.roomRepository.find();
@@ -44,17 +42,16 @@ export class ChatService {
     }
   }
 
-
   async getUserRooms(user: User) {
     const query = this.roomRepository.createQueryBuilder('room');
-    query.select()
+    query
+      .select()
       .where('room.createdBy LIKE :username', { username: user.username });
     const rooms = await query.getMany();
     return rooms;
   }
 
-  async createNewRoom(user: User,
-                      createRoomDto: RoomDto) {
+  async createNewRoom(user: User, createRoomDto: RoomDto) {
     const { name } = createRoomDto;
     const room = new Room();
     room.name = name;
@@ -64,8 +61,7 @@ export class ChatService {
     return await room.save();
   }
 
-  async updateRoom(id: number,
-                   updateRoomDto: RoomDto) {
+  async updateRoom(id: number, updateRoomDto: RoomDto) {
     const { name } = updateRoomDto;
     const room = await this.getRoomById(id);
     if (name) {

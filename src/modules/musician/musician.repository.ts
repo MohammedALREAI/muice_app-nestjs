@@ -2,7 +2,6 @@ import { EntityRepository, Repository } from 'typeorm';
 import { Gender, ArtistType } from '../../commons/enums/index.Enum';
 import { Musician } from './musician.entity';
 
-
 @EntityRepository(Musician)
 export class MusicianRepository extends Repository<Musician> {
   async getLimitedMusicians(limit: number): Promise<Musician[]> {
@@ -10,12 +9,18 @@ export class MusicianRepository extends Repository<Musician> {
     if (limit) {
       query.limit(limit);
     }
-    const musicians = await query.leftJoinAndSelect('musician.musicianAlbums', 'musician-album').getMany();
+    const musicians = await query
+      .leftJoinAndSelect('musician.musicianAlbums', 'musician-album')
+      .getMany();
     return musicians;
   }
 
-  async getFilteredMusicians(limit: number, nationality: string, type: ArtistType,
-    gender: Gender): Promise<Musician[]> {
+  async getFilteredMusicians(
+    limit: number,
+    nationality: string,
+    type: ArtistType,
+    gender: Gender,
+  ): Promise<Musician[]> {
     const query = this.createQueryBuilder('musician').select();
     if (limit) {
       query.limit(limit);
@@ -29,7 +34,9 @@ export class MusicianRepository extends Repository<Musician> {
     if (gender) {
       query.andWhere('musician.gender = :gender', { gender });
     }
-    const musicians = await query.leftJoinAndSelect('musician.musicianAlbums', 'musician-album').getMany();
+    const musicians = await query
+      .leftJoinAndSelect('musician.musicianAlbums', 'musician-album')
+      .getMany();
     return musicians;
   }
 }

@@ -8,12 +8,15 @@ import { PassportModule } from '@nestjs/passport';
 import { AuthJwt } from '../../config';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Profile]), PassportModule.register({
-    defaultStrategy: AuthJwt.strategies[0],
-  }), AwsModule],
+  imports: [
+    TypeOrmModule.forFeature([Profile]),
+    PassportModule.register({
+      defaultStrategy: AuthJwt.strategies[0],
+    }),
+    AwsModule,
+  ],
   controllers: [ProfileController],
   providers: [ProfileService],
-  exports: [ProfileService]
+  exports: [ProfileService],
 })
-export class ProfileModule {
-}
+export class ProfileModule {}

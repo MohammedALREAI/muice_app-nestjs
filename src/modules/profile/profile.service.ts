@@ -1,4 +1,9 @@
-import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
+import { UpdateProfileDto } from './../auth/dto/create-profile.dto';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Profile } from './profile.entity';
 import { Repository } from 'typeorm';
@@ -6,12 +11,12 @@ import { User } from '../auth/entities/user.entity';
 import { CreateProfileDto } from '../auth/dto/create-profile.dto';
 import { AwsService } from '../../shared/modules/aws/aws.service';
 
-
 @Injectable()
 export class ProfileService {
-  constructor(@InjectRepository(Profile) private profileRepository: Repository<Profile>,
-              private awsService: AwsService) {
-  }
+  constructor(
+    @InjectRepository(Profile) private profileRepository: Repository<Profile>,
+    private awsService: AwsService,
+  ) {}
 
   async getProfileData(user: User): Promise<Profile> {
     const profile = await this.profileRepository.findOne({
@@ -32,12 +37,23 @@ export class ProfileService {
     }
   }
 
-  async editProfile(user: User, createProfileDto: CreateProfileDto): Promise<Profile> {
+  async editProfile(
+    user: User,
+    updateProfileDto: UpdateProfileDto,
+  ): Promise<Profile> {
     const profile = await this.getProfileData(user);
-    const { firstName, lastName, phone, age, address, city, country, gender }
-      = createProfileDto;
+    const {
+      firstName,
+      lastName,
+      phone,
+      age,
+      address,
+      city,
+      country,
+      gender,
+    } = updateProfileDto;
     if (firstName) {
-    console.log(firstName);
+      console.log(firstName);
       profile.firstName = firstName;
     }
     if (lastName) {

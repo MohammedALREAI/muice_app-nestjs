@@ -1,21 +1,24 @@
+import { GetQueryFilteredSongDto } from './dto/getFilteredSongDto';
 import { EntityRepository, Repository } from 'typeorm';
 import { Song } from './song.entity';
-import { SongLanguage, SongType } from './../../commons/enums/index.Enum';
-
 
 @EntityRepository(Song)
-export class SongRepository extends Repository<Song>{
-
+export class SongRepository extends Repository<Song> {
   async getLimitedSongs(limit: number): Promise<Song[]> {
     const query = this.createQueryBuilder('song').select();
     if (limit) {
       query.limit(limit);
     }
-    const songs = await query.leftJoinAndSelect('song.tracks', 'track').getMany();
+    const songs = await query
+      .leftJoinAndSelect('song.tracks', 'track')
+      .getMany();
     return songs;
   }
 
-  async getFilteredSongs(limit: number, type: SongType, language: SongLanguage, rate: number): Promise<Song[]> {
+  async getFilteredSongs(
+    getQuerySingers: GetQueryFilteredSongDto,
+  ): Promise<Song[]> {
+    const { limit, type, language, rate } = getQuerySingers;
     const query = this.createQueryBuilder('song').select();
     if (limit) {
       query.limit(limit);
@@ -29,7 +32,9 @@ export class SongRepository extends Repository<Song>{
     if (rate) {
       query.andWhere('song.rate = :rate', { rate });
     }
-    const songs = await query.leftJoinAndSelect('song.tracks', 'track').getMany();
+    const songs = await query
+      .leftJoinAndSelect('song.tracks', 'track')
+      .getMany();
     return songs;
   }
 }

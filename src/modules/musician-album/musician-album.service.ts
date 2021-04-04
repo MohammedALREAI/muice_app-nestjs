@@ -1,8 +1,9 @@
+import { UpdateAlbumDto } from './../singer-album/dto/create-album.dto';
+import { CreateMusicAlBoomsDto, UpdateMusicAlBoomsDto } from './dto/createNewMusicDto';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DeleteResult, Repository } from 'typeorm';
 import { AwsService } from '../../shared/modules/aws/aws.service';
-import { CreateAlbumDto } from '../../shared/dto/create-album.dto';
 import { MusicianAlbum } from './musician-album.entity';
 import { MusicType } from '../../commons/enums/index.Enum';
 import { Music } from '../music/music.entity';
@@ -10,11 +11,12 @@ import { MusicService } from '../music/music.service';
 
 @Injectable()
 export class MusicianAlbumService {
-
-  constructor(@InjectRepository(MusicianAlbum) private musicianAlbumRepository: Repository<MusicianAlbum>,
+  constructor(
+    @InjectRepository(MusicianAlbum)
+    private musicianAlbumRepository: Repository<MusicianAlbum>,
     private awsService: AwsService,
-    private musicService: MusicService) {
-  }
+    private musicService: MusicService,
+  ) {}
 
   async getAllMusicianAlbums(): Promise<MusicianAlbum[]> {
     return await this.musicianAlbumRepository.find();
@@ -27,17 +29,16 @@ export class MusicianAlbumService {
       },
     });
     if (!musicianAlbum) {
-      throw new NotFoundException(`Musician Album Album with id ${id} does not found`);
+      throw new NotFoundException(
+        `Musician Album Album with id ${id} does not found`,
+      );
     }
     return musicianAlbum;
   }
 
-  async createNewMusic(musicianAlbumId: number, name: string,
-    description: string,
-    artist: string,
-    type: MusicType,
-    source: any,
+  async createNewMusic(createMusicAlBoomsDto:CreateMusicAlBoomsDto,source: any,
   ): Promise<Music> {
+    const {artist,name,description,type,musicianAlbumId}=createMusicAlBoomsDto
     const music = new Music();
     const musicianAlbum = await this.getMusicianAlbumById(musicianAlbumId);
     music.name = name;
@@ -51,9 +52,10 @@ export class MusicianAlbumService {
     return savedMusic;
   }
 
-  async updateMusicianAlbum(id: number, createAlbumDto: CreateAlbumDto): Promise<MusicianAlbum> {
-    const musicianAlbum = await this.getMusicianAlbumById(id);
-    const { name } = createAlbumDto;
+  async updateMusicianAlbum(updateAlbumDto:UpdateMusicAlBoomsDto,source:any): Promise<MusicianAlbum> {
+    const {name,musicianAlbumId}=updateAlbumDto
+
+    const musicianAlbum = await this.getMusicianAlbumById(musicianAlbumId);
     if (name) {
       musicianAlbum.name = name;
     }
@@ -68,7 +70,9 @@ export class MusicianAlbumService {
     }
     const result = await this.musicianAlbumRepository.delete(id);
     if (result.affected === 0) {
-      throw new NotFoundException(`Musician Album with id ${id} does not found`);
+      throw new NotFoundException(
+        `Musician Album with id ${id} does not found`,
+      );
     }
     return result;
   }

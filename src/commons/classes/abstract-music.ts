@@ -1,4 +1,9 @@
-import { BaseEntity, Column, CreateDateColumn, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  BaseEntity,
+  Column,
+  CreateDateColumn,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { IsString, IsDefined, IsNumber } from 'class-validator';
 
 export abstract class AbstractMusic extends BaseEntity {
@@ -23,15 +28,16 @@ export abstract class AbstractMusic extends BaseEntity {
   artist: string;
 
   @Column({
-    default: 0
+    default: 0,
   })
   rate: number;
 
   @Column()
   @IsString()
-  @IsDefined() source: string;
+  @IsDefined()
+  source: string;
 
-  @CreateDateColumn({ type: "date" })
+  @CreateDateColumn({ type: 'date' })
   publishedIn: Date;
 
   @Column()

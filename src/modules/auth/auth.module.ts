@@ -16,19 +16,23 @@ import { NotificationModule } from '../notification/notification.module';
 import { GoogleStrategy } from './stratigies/google.strategy';
 import { FacebookStrategy } from './stratigies/facebook.strategy';
 import myConfig from '../../config';
-const config = myConfig().AuthJwt
+const config = myConfig().AuthJwt;
 @Module({
   imports: [
     PassportModule.register({
       defaultStrategy: 'jwt',
     }),
     JwtModule.register({
-      secret:"SOMEtEXTFROyou",
+      secret: 'SOMEtEXTFROyou',
       signOptions: {
         expiresIn: config.expiresIn,
       },
     }),
-    TypeOrmModule.forFeature([UserRepository, EmailVerification, ForgottenPassword]),
+    TypeOrmModule.forFeature([
+      UserRepository,
+      EmailVerification,
+      ForgottenPassword,
+    ]),
     ProfileModule,
     FavoriteModule,
     PlaylistModule,
@@ -37,7 +41,13 @@ const config = myConfig().AuthJwt
   ],
   providers: [AuthService, JwtStrategy, GoogleStrategy, FacebookStrategy],
   controllers: [AuthController],
-  exports: [AuthService, JwtStrategy, GoogleStrategy, FacebookStrategy, JwtModule, PassportModule],
+  exports: [
+    AuthService,
+    JwtStrategy,
+    GoogleStrategy,
+    FacebookStrategy,
+    JwtModule,
+    PassportModule,
+  ],
 })
-export class AuthModule {
-}
+export class AuthModule {}

@@ -1,4 +1,13 @@
-import { BaseEntity, Column, Entity, JoinColumn, OneToMany, OneToOne, PrimaryGeneratedColumn, Unique } from 'typeorm';
+import {
+  BaseEntity,
+  Column,
+  Entity,
+  JoinColumn,
+  OneToMany,
+  OneToOne,
+  PrimaryGeneratedColumn,
+  Unique,
+} from 'typeorm';
 import { Role } from '../../../commons/enums/index.Enum';
 import * as bcrypt from 'bcryptjs';
 import { Profile } from '../../profile/profile.entity';
@@ -36,13 +45,11 @@ export class User extends BaseEntity {
   })
   roles: Role[];
 
-
   // new column
   @Column({
     default: false,
   })
   isEmailVerified: boolean;
-
 
   //  new column
   // this column is related to the functionality of signIn with facebook
@@ -58,35 +65,50 @@ export class User extends BaseEntity {
   })
   facebookId: string;
 
-
-
   async validatePassword(password: string): Promise<boolean> {
     const hash = await bcrypt.hash(password, this.salt);
     return hash === this.password;
   }
 
-  @OneToOne(type => Profile, profile => profile.user)
+  @OneToOne(
+    type => Profile,
+    profile => profile.user,
+  )
   @JoinColumn()
   profile: Profile;
 
-  @OneToOne(type => Subscriber, subscriber => subscriber.user)
+  @OneToOne(
+    type => Subscriber,
+    subscriber => subscriber.user,
+  )
   @JoinColumn()
   subscriber: Subscriber;
 
-  @OneToMany(type => Playlist, playlist => playlist.user, {
-    eager: true,
-  })
+  @OneToMany(
+    type => Playlist,
+    playlist => playlist.user,
+    {
+      eager: true,
+    },
+  )
   playlists: Playlist[];
 
-  @OneToMany(type => Message, message => message.user, {
-    eager: true,
-  })
+  @OneToMany(
+    type => Message,
+    message => message.user,
+    {
+      eager: true,
+    },
+  )
   messages: Message[];
 
-  @OneToMany(type => UserJoinedRoom,
-    userJoinedRoom => userJoinedRoom.user, {
-    eager: true,
-  })
+  @OneToMany(
+    type => UserJoinedRoom,
+    userJoinedRoom => userJoinedRoom.user,
+    {
+      eager: true,
+    },
+  )
   userJoinedRooms: UserJoinedRoom[];
 
   // Foreign Key
@@ -98,7 +120,6 @@ export class User extends BaseEntity {
     nullable: true,
   })
   subscriberId: number;
-
 
   // this column related to socket io
   @Column({

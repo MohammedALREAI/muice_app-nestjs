@@ -1,24 +1,50 @@
+import { PartialType } from '@nestjs/mapped-types';
 import { IsString, IsDefined } from 'class-validator';
 import { Gender, ArtistType } from '../../../commons/enums/index.Enum';
 import { ApiProperty } from '@nestjs/swagger';
 export class CreateNewSingerDto {
-  @ApiProperty()
+  @ApiProperty({
+    name: 'nationality',
+    required: true,
+    description: 'firstName enter for user',
+  })
   @IsString()
   @IsDefined()
-  nationality: string
+  nationality: string;
   @IsString()
   @IsDefined()
-  @ApiProperty()
-  name: string
+  @ApiProperty({
+    name: 'name',
+    required: true,
+    description: 'firstName enter for user',
+  })
+  name: string;
   @IsString()
   @IsDefined()
-  @ApiProperty()
-  info: string
+  @ApiProperty({
+    name: 'info',
+    required: true,
+    description: 'firstName enter for user',
+  })
+  info: string;
 
-  @ApiProperty()
-  gender: Gender
+  @ApiProperty({
+    name: 'gender',
+    required: true,
+    description: 'firstName enter for user',
+    enum: Gender,
+    enumName: 'Gender',
+  })
+  gender: Gender;
 
-  @ApiProperty()
-  type: ArtistType
-
+  @ApiProperty({
+    name: 'type',
+    required: true,
+    description: 'firstName enter for user',
+    enum: ArtistType,
+    enumName: 'ArtistType',
+  })
+  type: ArtistType;
 }
+
+export class UpdateNewSingerDto extends PartialType(CreateNewSingerDto) {}

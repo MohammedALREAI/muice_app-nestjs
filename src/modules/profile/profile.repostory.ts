@@ -1,18 +1,22 @@
-import { EntityRepository, Repository, } from 'typeorm';
+import { EntityRepository, Repository } from 'typeorm';
 
-import { Profile } from '../profile.entity';
-import { User } from '../../auth/entities/user.entity';
-import { NotFoundException, InternalServerErrorException, BadRequestException, ConflictException } from '@nestjs/common';
-import { CreateProfileDto } from '../../auth/dto/create-profile.dto';
-import { AwsService } from '../../aws/aws.service';
+import { Profile } from './profile.entity';
+import { User } from '../auth/entities/user.entity';
+import {
+  NotFoundException,
+  InternalServerErrorException,
+  BadRequestException,
+  ConflictException,
+} from '@nestjs/common';
+import { CreateProfileDto } from '../auth/dto/create-profile.dto';
+import { AwsService } from '../aws/aws.service';
 
 //  when we will be used the  app  we need to injection it
 // this is a provider
 @EntityRepository(Profile)
 export class ProfileRepository extends Repository<Profile> {
-
   constructor(private awsService: AwsService) {
-    super()
+    super();
   }
 
   async getProfileData(user: User): Promise<Profile> {
@@ -22,10 +26,10 @@ export class ProfileRepository extends Repository<Profile> {
         throw new NotFoundException('profile does not found');
       }
       return profile;
-
     } catch (e) {
-      throw new InternalServerErrorException(`there are some error in server ${e}`)
-
+      throw new InternalServerErrorException(
+        `there are some error in server ${e}`,
+      );
     }
   }
 
@@ -36,10 +40,21 @@ export class ProfileRepository extends Repository<Profile> {
     }
   }
 
-  async editProfile(user: User, createProfileDto: CreateProfileDto): Promise<Profile> {
+  async editProfile(
+    user: User,
+    createProfileDto: CreateProfileDto,
+  ): Promise<Profile> {
     const profile = await this.getProfileData(user);
-    const { firstName, lastName, phone, age, address, city, country, gender }
-      = createProfileDto;
+    const {
+      firstName,
+      lastName,
+      phone,
+      age,
+      address,
+      city,
+      country,
+      gender,
+    } = createProfileDto;
     if (firstName) {
       profile.firstName = firstName;
     }
@@ -68,13 +83,13 @@ export class ProfileRepository extends Repository<Profile> {
       const savedProfile = await profile.save();
       if (!savedProfile) {
         throw new BadRequestException('profile does not found');
-
       }
 
       return savedProfile;
     } catch (e) {
-      throw new InternalServerErrorException(`There are some error in server ${e}`)
-
+      throw new InternalServerErrorException(
+        `There are some error in server ${e}`,
+      );
     }
   }
 
@@ -87,13 +102,13 @@ export class ProfileRepository extends Repository<Profile> {
       const savedProfile = await profile.save();
       if (!savedProfile) {
         throw new BadRequestException('profile does not found');
-
       }
 
       return savedProfile;
     } catch (e) {
-      throw new InternalServerErrorException(`There are some error in server ${e}`)
-
+      throw new InternalServerErrorException(
+        `There are some error in server ${e}`,
+      );
     }
   }
 
@@ -107,13 +122,13 @@ export class ProfileRepository extends Repository<Profile> {
       const savedProfile = await profile.save();
       if (!savedProfile) {
         throw new BadRequestException('profile does not found');
-
       }
 
       return savedProfile;
     } catch (e) {
-      throw new InternalServerErrorException(`There are some error in server ${e}`)
-
+      throw new InternalServerErrorException(
+        `There are some error in server ${e}`,
+      );
     }
   }
 
@@ -129,15 +144,13 @@ export class ProfileRepository extends Repository<Profile> {
       const savedProfile = await profile.save();
       if (!savedProfile) {
         throw new BadRequestException('profile does not found');
-
       }
 
       return savedProfile;
     } catch (e) {
-      throw new InternalServerErrorException(`There are some error in server ${e}`)
-
+      throw new InternalServerErrorException(
+        `There are some error in server ${e}`,
+      );
     }
   }
-
 }
-

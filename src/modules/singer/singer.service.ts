@@ -1,3 +1,8 @@
+import {
+  CreateNewSingerDto,
+  UpdateNewSingerDto,
+} from './dto/createNewSingerDto';
+import { GetQuerySingers } from './dto/getFilteredSingersDto';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { Singer } from './singer.entity';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -12,11 +17,12 @@ import { SingerAlbumService } from '../singer-album/singer-album.service';
 
 @Injectable()
 export class SingerService {
-
-  constructor(@InjectRepository(SingerRepository) private singerRepository: SingerRepository,
+  constructor(
+    @InjectRepository(SingerRepository)
+    private singerRepository: SingerRepository,
     private awsService: AwsService,
-    private singerAlbumService: SingerAlbumService) {
-  }
+    private singerAlbumService: SingerAlbumService,
+  ) {}
 
   async getAllSingers(): Promise<Singer[]> {
     return await this.singerRepository.find();
@@ -26,9 +32,10 @@ export class SingerService {
     return await this.singerRepository.getLimitedSingers(limit);
   }
 
-  async getFilteredSingers(limit: number, nationality: string, type: ArtistType,
-    gender: Gender): Promise<Singer[]> {
-    return await this.singerRepository.getFilteredSingers(limit, nationality, type, gender);
+  async getFilteredSingers(
+    getQuerySingers: GetQuerySingers,
+  ): Promise<Singer[]> {
+    return await this.singerRepository.getFilteredSingers(getQuerySingers);
   }
 
   async getSingerById(id: number): Promise<Singer> {
@@ -41,9 +48,11 @@ export class SingerService {
     return singer;
   }
 
-  async createNewSinger(name: string, info: string, gender: Gender, type: ArtistType,
-    nationality: string,
-    image: any): Promise<Singer> {
+  async createNewSinger(
+    createNewSinger: CreateNewSingerDto,
+    image: any,
+  ): Promise<Singer> {
+    const { name, info, gender, type, nationality } = createNewSinger;
     const singer = new Singer();
     singer.name = name;
     singer.info = info;
@@ -56,9 +65,13 @@ export class SingerService {
     return savedSinger;
   }
 
-  async updateSinger(id: number, name: string, info: string, gender: Gender, nationality: string,
-    type: ArtistType, image: any): Promise<Singer> {
+  async updateSinger(
+    id: number,
+    updateNewSingerDto: UpdateNewSingerDto,
+    image: any,
+  ): Promise<Singer> {
     const singer = await this.getSingerById(id);
+    const { name, info, gender, nationality, type } = updateNewSingerDto;
     if (name) {
       singer.name = name;
     }
@@ -85,7 +98,9 @@ export class SingerService {
   async deleteSinger(singerId: number): Promise<DeleteResult> {
     const singer = await this.getSingerById(singerId);
     for (let i = 0; i < singer.singerAlbums.length; i++) {
-      await this.singerAlbumService.deleteSingerAlbum(singer.singerAlbums[i].id);
+      await this.singerAlbumService.deleteSingerAlbum(
+        singer.singerAlbums[i].id,
+      );
     }
     if (singer.image) {
       await this.awsService.fileDelete(singer.image);
@@ -97,15 +112,17 @@ export class SingerService {
     return result;
   }
 
-  async createNewAlbum(singerId: number, createAlbumDto: CreateAlbumDto): Promise<SingerAlbum> {
+  async createNewAlbum(
+    singerId: number,
+    createAlbumDto: CreateAlbumDto,
+  ): Promise<SingerAlbum> {
     const singer = await this.getSingerById(singerId);
     const singerAlbum = new SingerAlbum();
     const { name } = createAlbumDto;
     singerAlbum.name = name;
-    singerAlbum.singer = singer;// this will create a foreign key
+    singerAlbum.singer = singer; // this will create a foreign key
     singerAlbum.image = singer.image;
     const savedSingerAlbum = await singerAlbum.save();
     return savedSingerAlbum;
   }
-
 }

@@ -11,10 +11,12 @@ import { MusicianAlbumService } from '../musician-album/musician-album.service';
 
 @Injectable()
 export class MusicianService {
-  constructor(@InjectRepository(MusicianRepository) private musicianRepository: MusicianRepository,
+  constructor(
+    @InjectRepository(MusicianRepository)
+    private musicianRepository: MusicianRepository,
     private awsService: AwsService,
-    private musicianAlbumService: MusicianAlbumService) {
-  }
+    private musicianAlbumService: MusicianAlbumService,
+  ) {}
 
   async getAllMusicians(): Promise<Musician[]> {
     return await this.musicianRepository.find();
@@ -24,9 +26,18 @@ export class MusicianService {
     return await this.musicianRepository.getLimitedMusicians(limit);
   }
 
-  async getFilteredMusicians(limit: number, nationality: string, type: ArtistType,
-    gender: Gender): Promise<Musician[]> {
-    return await this.musicianRepository.getFilteredMusicians(limit, nationality, type, gender);
+  async getFilteredMusicians(
+    limit: number,
+    nationality: string,
+    type: ArtistType,
+    gender: Gender,
+  ): Promise<Musician[]> {
+    return await this.musicianRepository.getFilteredMusicians(
+      limit,
+      nationality,
+      type,
+      gender,
+    );
   }
 
   async getMusicianById(id: number): Promise<Musician> {
@@ -39,9 +50,14 @@ export class MusicianService {
     return musician;
   }
 
-  async createNewMusician(name: string, info: string, gender: Gender, type: ArtistType,
+  async createNewMusician(
+    name: string,
+    info: string,
+    gender: Gender,
+    type: ArtistType,
     nationality: string,
-    image: any): Promise<Musician> {
+    image: any,
+  ): Promise<Musician> {
     const musician = new Musician();
     musician.name = name;
     musician.info = info;
@@ -54,8 +70,15 @@ export class MusicianService {
     return savedMusician;
   }
 
-  async updateMusician(id: number, name: string, info: string, gender: Gender, nationality: string,
-    type: ArtistType, image: any): Promise<Musician> {
+  async updateMusician(
+    id: number,
+    name: string,
+    info: string,
+    gender: Gender,
+    nationality: string,
+    type: ArtistType,
+    image: any,
+  ): Promise<Musician> {
     const musician = await this.getMusicianById(id);
     if (name) {
       musician.name = name;
@@ -74,7 +97,10 @@ export class MusicianService {
     }
     if (image) {
       await this.awsService.fileDelete(musician.image);
-      musician.image = await this.awsService.fileUpload(image, 'musician-images');
+      musician.image = await this.awsService.fileUpload(
+        image,
+        'musician-images',
+      );
     }
     const savedMusician = await musician.save();
     return savedMusician;
@@ -86,22 +112,29 @@ export class MusicianService {
       await this.awsService.fileDelete(musician.image);
     }
     for (let i = 0; i < musician.musicianAlbums.length; i++) {
-      await this.musicianAlbumService.deleteMusicianAlbum(musician.musicianAlbums[i].id)
+      await this.musicianAlbumService.deleteMusicianAlbum(
+        musician.musicianAlbums[i].id,
+      );
     }
     const result = await this.musicianRepository.delete(musicianId);
     if (result.affected === 0) {
-      throw new NotFoundException(`Musician with id ${musicianId} does not found`);
+      throw new NotFoundException(
+        `Musician with id ${musicianId} does not found`,
+      );
     }
     return result;
   }
 
   // implementation later
-  async createNewAlbum(musicianId: number, createAlbumDto: CreateAlbumDto): Promise<MusicianAlbum> {
+  async createNewAlbum(
+    musicianId: number,
+    createAlbumDto: CreateAlbumDto,
+  ): Promise<MusicianAlbum> {
     const musician = await this.getMusicianById(musicianId);
     const musicianAlbum = new MusicianAlbum();
     const { name } = createAlbumDto;
     musicianAlbum.name = name;
-    musicianAlbum.musician = musician;// this will create a foreign key
+    musicianAlbum.musician = musician; // this will create a foreign key
     musicianAlbum.image = musician.image;
 
     musicianAlbum.musics = []; // updated

@@ -11,13 +11,18 @@ import { TrackModule } from '../track/track.module';
 import { AuthJwt } from '../../config';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([SongRepository]),
-    AwsModule, FavoriteModule, PassportModule.register({
+  imports: [
+    TypeOrmModule.forFeature([SongRepository]),
+    AwsModule,
+    FavoriteModule,
+    PassportModule.register({
       defaultStrategy: AuthJwt.strategies[0],
-    }), PlaylistModule, TrackModule],
+    }),
+    PlaylistModule,
+    TrackModule,
+  ],
   controllers: [SongController],
   providers: [SongService],
-  exports: [SongService]
+  exports: [SongService],
 })
-export class SongModule {
-}
+export class SongModule {}

@@ -9,13 +9,15 @@ import { SingerAlbumModule } from '../singer-album/singer-album.module';
 import { AuthJwt } from '../../config';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([SingerRepository]),
-  PassportModule.register({
-    defaultStrategy: AuthJwt.strategies[0],
-  }),
-    AwsModule, SingerAlbumModule],
+  imports: [
+    TypeOrmModule.forFeature([SingerRepository]),
+    PassportModule.register({
+      defaultStrategy: AuthJwt.strategies[0],
+    }),
+    AwsModule,
+    SingerAlbumModule,
+  ],
   controllers: [SingerController],
-  providers: [SingerService]
-
+  providers: [SingerService],
 })
-export class SingerModule { }
+export class SingerModule {}

@@ -1,8 +1,18 @@
-import { ApiProperty } from "@nestjs/swagger";
+import { ApiProperty } from '@nestjs/swagger';
+import { IsEmail, IsString } from 'class-validator';
 export class EmailLoginDto {
-
-  @ApiProperty()
-  email: string;
-  @ApiProperty()
-  password: string;
+  @ApiProperty({
+    name: 'email',
+    required: true,
+    description: 'please enter user email ',
+  })
+  @IsEmail()
+  readonly email: string;
+  @ApiProperty({
+    name: 'email',
+    required: true,
+    description: 'please enter user email ',
+  })
+  @IsString()
+  readonly password: string;
 }

@@ -19,36 +19,32 @@ import { ChatService } from './chat.service';
 // this is a provider
 @WebSocketGateway()
 export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
-
-  constructor(private chatService: ChatService,
-              @Inject(forwardRef(() => AuthService)) private authService: AuthService,
-              @InjectRepository(Message) private readonly messageRepository: Repository<Message>,
-              @InjectRepository(Room) private readonly roomRepository: Repository<Room>) {
-  }
-
+  constructor(
+    private chatService: ChatService,
+    @Inject(forwardRef(() => AuthService)) private authService: AuthService,
+    @InjectRepository(Message)
+    private readonly messageRepository: Repository<Message>,
+    @InjectRepository(Room) private readonly roomRepository: Repository<Room>,
+  ) {}
 
   /*
-  * this server is public server ,that used to detect the number of available users
-  * on the chat
-  *
-  * */
+   * this server is public server ,that used to detect the number of available users
+   * on the chat
+   *
+   * */
   @WebSocketServer() server;
-
 
   private users = 0;
 
   async handleConnection() {
-
     // A client has connected
     this.users++;
 
     // Notify connected clients of current users
     this.server.emit('connected-users', this.users);
-
   }
 
   async handleDisconnect(client: Socket) {
-
     // A client has disconnected
     this.users--;
 
@@ -58,16 +54,20 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     // Notify when the user disconnected and has leaved
     if (client && client.id) {
       const user = await this.authService.findUser(null, null, client.id);
-      if(user){
-      client.server.emit('users-changed', { user: user.username, event: 'left' });
+      if (user) {
+        client.server.emit('users-changed', {
+          user: user.username,
+          event: 'left',
+        });
       }
     }
-
   }
 
-
   @SubscribeMessage('enter-chat-room')
-  async enterChatRoom(client: Socket, data: { nickname: string, roomId: number }) {
+  async enterChatRoom(
+    client: Socket,
+    data: { nickname: string; roomId: number },
+  ) {
     const { nickname, roomId } = data;
     const user: User = await this.authService.findUser(null, nickname);
     const room = await this.chatService.getRoomById(roomId);
@@ -76,9 +76,10 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     let userJoinedRoom: UserJoinedRoom;
 
     // this function is used to determine if the user has joined this room or not
-    let isUserJoined = () =>
-      user.userJoinedRooms.some(userJoinedRoom => userJoinedRoom.roomId === roomId);
-
+    const isUserJoined = () =>
+      user.userJoinedRooms.some(
+        userJoinedRoom => userJoinedRoom.roomId === roomId,
+      );
 
     // if the user does not join the room, we will create the user joined room object
     if (!isUserJoined()) {
@@ -95,24 +96,30 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
       user.clientId = client.id;
       await user.save();
     }
-    client.join(roomId.toString()).broadcast.to(roomId.toString(),
-    ).emit('users-changed', { user: user.username, event: 'joined' });
+    client
+      .join(roomId.toString())
+      .broadcast.to(roomId.toString())
+      .emit('users-changed', { user: user.username, event: 'joined' });
   }
 
   @SubscribeMessage('leave-room')
-  async leaveRoom(client: Socket, data: { nickname: string, roomId: number }) {
+  async leaveRoom(client: Socket, data: { nickname: string; roomId: number }) {
     const { nickname, roomId } = data;
     const user: User = await this.authService.findUser(null, nickname);
 
     // Notify the users in the room that this client has leaved
     client.broadcast.to(roomId.toString()).emit('users-changed', {
-      user: user.username, event: 'left',
+      user: user.username,
+      event: 'left',
     });
     client.leave(roomId.toString());
   }
 
   @SubscribeMessage('add-message')
-  async addMessage(client: Socket, data: { text: string, roomId: number, userId: number }) {
+  async addMessage(
+    client: Socket,
+    data: { text: string; roomId: number; userId: number },
+  ) {
     const { text, roomId, userId } = data;
     const user = await this.authService.findUser(userId);
     const room = await this.chatService.getRoomById(roomId);
@@ -132,6 +139,4 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     msg.created = new Date();
     return await msg.save();
   }
-
-
 }

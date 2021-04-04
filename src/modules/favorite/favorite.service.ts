@@ -1,3 +1,4 @@
+import { GetByIdDto } from './../../commons/dto/getByID';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Favorite } from './favorite.entity';
@@ -7,12 +8,13 @@ import { TrackService } from '../track/track.service';
 import { Music } from '../music/music.entity';
 import { Song } from '../song/song.entity';
 
-
 @Injectable()
 export class FavoriteService {
-  constructor(@InjectRepository(Favorite) private readonly favoriteRepository: Repository<Favorite>,
-              private trackService: TrackService) {
-  }
+  constructor(
+    @InjectRepository(Favorite)
+    private readonly favoriteRepository: Repository<Favorite>,
+    private trackService: TrackService,
+  ) {}
 
   async getUserFavoriteList(id: number, profile?: Profile): Promise<Favorite> {
     let favoriteList = null;
@@ -47,14 +49,15 @@ export class FavoriteService {
     return await favorite.save();
   }
 
-  async removeTrackFromFavouriteList(favouriteId: number, trackId: number): Promise<Favorite> {
+  async removeTrackFromFavouriteList(
+    favouriteId: number,
+    trackId: number,
+  ): Promise<Favorite> {
     const favorite = await this.getUserFavoriteList(favouriteId);
     for (let i = 0; i < favorite.tracks.length; i++) {
       if (trackId === favorite.tracks[i].id) {
-        await this.trackService.deleteTrack(
-          trackId,
-        );
-        favorite.tracks.splice(i,1);
+        await this.trackService.deleteTrack(trackId);
+        favorite.tracks.splice(i, 1);
         break;
       }
     }

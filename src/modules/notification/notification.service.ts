@@ -14,10 +14,14 @@ import { v4 as uuidv4 } from 'uuid';
 
 @Injectable()
 export class NotificationService {
-  constructor(@InjectRepository(Subscriber) private subscriberRepository: Repository<Subscriber>,
-              @InjectRepository(SubscribersNotifications)
-              private subscribersNotificationsRepository: Repository<SubscribersNotifications>) {
-  }
+  constructor(
+    @InjectRepository(Subscriber)
+    private subscriberRepository: Repository<Subscriber>,
+    @InjectRepository(SubscribersNotifications)
+    private subscribersNotificationsRepository: Repository<
+      SubscribersNotifications
+    >,
+  ) {}
 
   async getAllSubscribers(): Promise<Subscriber[]> {
     return await this.subscriberRepository.find();
@@ -35,7 +39,9 @@ export class NotificationService {
     return subscriber;
   }
 
-  async getSubscriberNotifications(id: number): Promise<SubscribersNotifications[]> {
+  async getSubscriberNotifications(
+    id: number,
+  ): Promise<SubscribersNotifications[]> {
     const subscriber = await this.getSubscriberById(id);
     return subscriber.subscribersNotifications;
   }
@@ -43,8 +49,9 @@ export class NotificationService {
   async deleteSubscriber(id: number): Promise<void> {
     const subscriber = await this.getSubscriberById(id);
     for (let i = 0; i < subscriber.subscribersNotifications.length; i++) {
-      await this.subscribersNotificationsRepository
-        .delete(subscriber.subscribersNotifications[i].id);
+      await this.subscribersNotificationsRepository.delete(
+        subscriber.subscribersNotifications[i].id,
+      );
     }
     const result = await this.subscriberRepository.delete(id);
     if (result.affected === 0) {
@@ -63,8 +70,9 @@ export class NotificationService {
     return await subscriber.save();
   }
 
-
-  async sendNewNotification(notificationPayloadDto: NotificationPayloadDto): Promise<void> {
+  async sendNewNotification(
+    notificationPayloadDto: NotificationPayloadDto,
+  ): Promise<void> {
     const { title, body } = notificationPayloadDto;
     const notificationPayload = new NotificationPayload();
     notificationPayload.notification = new Notification();
@@ -90,16 +98,22 @@ export class NotificationService {
     const notification = await this.createNotification(title, body);
     for (let i = 0; i < subscribers.length; i++) {
       await this.createSubscriberNotification(
-        notificationPayload, notification, subscribers[i],
+        notificationPayload,
+        notification,
+        subscribers[i],
       );
-      await webPush.sendNotification(subscribers[i], JSON.stringify(notificationPayload));
+      await webPush.sendNotification(
+        subscribers[i],
+        JSON.stringify(notificationPayload),
+      );
     }
-
   }
 
-  async createSubscriberNotification(notificationPayload: NotificationPayload,
-                                     notification: NotificationEntity,
-                                     subscriber: Subscriber): Promise<void> {
+  async createSubscriberNotification(
+    notificationPayload: NotificationPayload,
+    notification: NotificationEntity,
+    subscriber: Subscriber,
+  ): Promise<void> {
     const subscribeNotification = new SubscribersNotifications();
     subscribeNotification.title = notificationPayload.notification.title;
     subscribeNotification.body = notificationPayload.notification.body;
@@ -111,9 +125,7 @@ export class NotificationService {
     subscribeNotification.subscriber = subscriber;
     subscribeNotification.notification = notification;
     await subscribeNotification.save();
-
   }
-
 
   async createNotification(title: string, body: string) {
     const notification = new NotificationEntity();

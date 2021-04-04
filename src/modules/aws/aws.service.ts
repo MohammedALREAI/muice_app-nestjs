@@ -1,13 +1,10 @@
 import { Injectable } from '@nestjs/common';
-import * as AWS from 'aws-sdk'
+import * as AWS from 'aws-sdk';
 import { extname } from 'path';
 
 @Injectable()
 export class AwsService {
-
-
   constructor(private s3: AWS.S3) {
-
     this.s3 = new AWS.S3();
     AWS.config.update({
       accessKeyId: process.env.ACCESS_KEY_ID,
@@ -37,7 +34,6 @@ export class AwsService {
       });
     });
   }
-
 
   async fileDelete(filename: string): Promise<any> {
     return new Promise((resolve, reject) => {

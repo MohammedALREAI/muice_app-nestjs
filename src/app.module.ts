@@ -17,21 +17,18 @@ import { NodemailerModule } from '@crowdlinker/nestjs-mailer';
 import { ChatModule } from './shared/modules/chat/chat.module';
 import { AppController } from './app.controller';
 import { MulterModule } from '@nestjs/platform-express';
-import * as dotenv from 'dotenv'
 import { ConfigModule } from '@nestjs/config';
-import configuration from './config'
+import configuration from './config';
 import { DatabaseConnectionService } from './DatabaseConnectionService ';
 
-const nodeMailerOptions = configuration().nodeMailerOptions
+const nodeMailerOptions = configuration().nodeMailerOptions;
 @Module({
   imports: [
-
     ConfigModule.forRoot({
       isGlobal: true,
       load: [configuration],
       ignoreEnvFile: true,
       envFilePath: '.env',
-
     }),
     TypeOrmModule.forRootAsync({
       useClass: DatabaseConnectionService,
@@ -56,5 +53,4 @@ const nodeMailerOptions = configuration().nodeMailerOptions
   ],
   controllers: [AppController],
 })
-export class AppModule {
-}
+export class AppModule {}

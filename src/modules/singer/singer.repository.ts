@@ -1,7 +1,6 @@
+import { GetQuerySingers } from './dto/getFilteredSingersDto';
 import { EntityRepository, Repository } from 'typeorm';
 import { Singer } from './singer.entity';
-import { Gender, ArtistType } from '../../commons/enums/index.Enum';
-
 
 // this is a provider
 @EntityRepository(Singer)
@@ -11,12 +10,16 @@ export class SingerRepository extends Repository<Singer> {
     if (limit) {
       query.limit(limit);
     }
-    const singers = await query.leftJoinAndSelect('singer.singerAlbums', 'singer-album').getMany();
+    const singers = await query
+      .leftJoinAndSelect('singer.singerAlbums', 'singer-album')
+      .getMany();
     return singers;
   }
 
-  async getFilteredSingers(limit: number, nationality: string, type: ArtistType,
-    gender: Gender): Promise<Singer[]> {
+  async getFilteredSingers(
+    getQuerySingers: GetQuerySingers,
+  ): Promise<Singer[]> {
+    const { limit, nationality, type, gender } = getQuerySingers;
     const query = this.createQueryBuilder('singer').select();
     if (limit) {
       query.limit(limit);
@@ -30,7 +33,9 @@ export class SingerRepository extends Repository<Singer> {
     if (gender) {
       query.andWhere('singer.gender = :gender', { gender });
     }
-    const singers = await query.leftJoinAndSelect('singer.singerAlbums', 'singer-albums').getMany();
+    const singers = await query
+      .leftJoinAndSelect('singer.singerAlbums', 'singer-albums')
+      .getMany();
     return singers;
   }
 }

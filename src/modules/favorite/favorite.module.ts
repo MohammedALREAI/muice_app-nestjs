@@ -8,13 +8,15 @@ import { TrackModule } from '../track/track.module';
 import { AuthJwt } from '../../config';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Favorite]),
-  PassportModule.register({
-    defaultStrategy: AuthJwt.strategies[0],
-  }), TrackModule],
+  imports: [
+    TypeOrmModule.forFeature([Favorite]),
+    PassportModule.register({
+      defaultStrategy: AuthJwt.strategies[0],
+    }),
+    TrackModule,
+  ],
   controllers: [FavoriteController],
   providers: [FavoriteService],
-  exports: [FavoriteService]
+  exports: [FavoriteService],
 })
-export class FavoriteModule {
-}
+export class FavoriteModule {}

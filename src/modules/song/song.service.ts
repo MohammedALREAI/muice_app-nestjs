@@ -1,3 +1,6 @@
+import { UpdateSongDto } from './dto/updateSongDto';
+import { GetQueryFilteredSongDto } from './dto/getFilteredSongDto';
+import { GetQuerySingers } from './../singer/dto/getFilteredSingersDto';
 import { SongLanguage, SongType } from './../../commons/enums/index.Enum';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -12,12 +15,13 @@ import { TrackService } from '../track/track.service';
 
 @Injectable()
 export class SongService {
-  constructor(@InjectRepository(SongRepository) private songRepository: SongRepository,
+  constructor(
+    @InjectRepository(SongRepository) private songRepository: SongRepository,
     private awsService: AwsService,
     private favService: FavoriteService,
     private playlistService: PlaylistService,
-    private trackService: TrackService) {
-  }
+    private trackService: TrackService,
+  ) {}
 
   async getAllSongs(): Promise<Song[]> {
     return await this.songRepository.find();
@@ -35,17 +39,22 @@ export class SongService {
     return song;
   }
 
-  async getFilteredSong(limit: number,
-    type: SongType, language: SongLanguage, rate: number): Promise<Song[]> {
-    return await this.songRepository.getFilteredSongs(limit, type, language, rate);
+  async getFilteredSong(
+    getQuerySingers: GetQueryFilteredSongDto,
+  ): Promise<Song[]> {
+    return await this.songRepository.getFilteredSongs(getQuerySingers);
   }
 
   async getLimitedSongs(limit: number): Promise<Song[]> {
     return await this.songRepository.getLimitedSongs(limit);
   }
 
-  async updateSong(id: number, name: string, description: string,
-    artist: string, type: SongType, language: SongLanguage, source: any): Promise<Song> {
+  async updateSong(
+    id: number,
+    updateSongDto: UpdateSongDto,
+    source: any,
+  ): Promise<Song> {
+    const { name, description, artist, language, type } = updateSongDto;
     const song = await this.getSongById(id);
     if (name) {
       song.name = name;
@@ -85,17 +94,26 @@ export class SongService {
     return result;
   }
 
-  async pushToFavoriteList(songId: number, favoriteListId: number): Promise<Track> {
+  async pushToFavoriteList(
+    songId: number,
+    favoriteListId: number,
+  ): Promise<Track> {
     const song = await this.getSongById(songId);
-    const track = await this.favService.createFavoriteTrack(song, null, favoriteListId);
+    const track = await this.favService.createFavoriteTrack(
+      song,
+      null,
+      favoriteListId,
+    );
     return track;
   }
 
   async pushToPlaylist(songId: number, playlistId: number): Promise<Track> {
     const song = await this.getSongById(songId);
-    const track = await this.playlistService.createPlaylistTrack(song, null, playlistId);
+    const track = await this.playlistService.createPlaylistTrack(
+      song,
+      null,
+      playlistId,
+    );
     return track;
   }
-
-
 }

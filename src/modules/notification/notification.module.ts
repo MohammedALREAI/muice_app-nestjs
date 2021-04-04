@@ -10,14 +10,17 @@ import { AuthJwt } from '../../config';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([NotificationEntity, Subscriber, SubscribersNotifications]),
+    TypeOrmModule.forFeature([
+      NotificationEntity,
+      Subscriber,
+      SubscribersNotifications,
+    ]),
     PassportModule.register({
       defaultStrategy: AuthJwt.strategies[0],
     }),
   ],
   providers: [NotificationService],
   controllers: [NotificationController],
-  exports: [NotificationService]
+  exports: [NotificationService],
 })
-export class NotificationModule {
-}
+export class NotificationModule {}

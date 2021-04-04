@@ -1,3 +1,9 @@
+import {
+  GetByIdDto,
+  GetLimitDto,
+  GetByMusicIdDto,
+  GetPlaylistIdDto,
+} from './../../commons/dto/getByID';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { MusicRepository } from './music.repository';
@@ -12,12 +18,13 @@ import { TrackService } from '../track/track.service';
 
 @Injectable()
 export class MusicService {
-  constructor(@InjectRepository(MusicRepository) private musicRepository: MusicRepository,
+  constructor(
+    @InjectRepository(MusicRepository) private musicRepository: MusicRepository,
     private awsService: AwsService,
     private favService: FavoriteService,
     private playlistService: PlaylistService,
-    private trackService: TrackService) {
-  }
+    private trackService: TrackService,
+  ) {}
 
   async getAllMusics(): Promise<Music[]> {
     return await this.musicRepository.find();
@@ -35,18 +42,26 @@ export class MusicService {
     return music;
   }
 
-  async getFilteredMusics(limit: number,
-    type: MusicType, rate: number): Promise<Music[]> {
+  async getFilteredMusics(
+    limit: number,
+    type: MusicType,
+    rate: number,
+  ): Promise<Music[]> {
     return await this.musicRepository.getFilteredMusics(limit, type, rate);
   }
-
 
   async getLimitedMusics(limit: number): Promise<Music[]> {
     return await this.musicRepository.getLimitedMusics(limit);
   }
 
-  async updateMusic(id: number, name: string, description: string,
-    artist: string, type: MusicType, source: any): Promise<Music> {
+  async updateMusic(
+    id: number,
+    name: string,
+    description: string,
+    artist: string,
+    type: MusicType,
+    source: any,
+  ): Promise<Music> {
     const music = await this.getMusicById(id);
     if (name) {
       music.name = name;
@@ -84,16 +99,26 @@ export class MusicService {
     return result;
   }
 
-  async pushToFavoriteList(musicId: number, favoriteListId: number): Promise<Track> {
+  async pushToFavoriteList(
+    musicId: number,
+    favoriteListId: number,
+  ): Promise<Track> {
     const music = await this.getMusicById(musicId);
-    const track = await this.favService.createFavoriteTrack(null, music, favoriteListId);
+    const track = await this.favService.createFavoriteTrack(
+      null,
+      music,
+      favoriteListId,
+    );
     return track;
   }
 
-
   async pushToPlaylist(musicId: number, playlistId: number): Promise<Track> {
     const music = await this.getMusicById(musicId);
-    const track = await this.playlistService.createPlaylistTrack(null, music, playlistId);
+    const track = await this.playlistService.createPlaylistTrack(
+      null,
+      music,
+      playlistId,
+    );
     return track;
   }
 }

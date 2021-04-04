@@ -1,3 +1,4 @@
+import { CreateNewSongDto } from './dto/createNewSongDto';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { SingerAlbum } from './singer-album.entity';
@@ -7,14 +8,16 @@ import { SongType, SongLanguage } from '../../commons/enums/index.Enum';
 import { AwsService } from '../../shared/modules/aws/aws.service';
 import { CreateAlbumDto } from '../../shared/dto/create-album.dto';
 import { SongService } from '../song/song.service';
+import { UpdateAlbumDto } from './dto/create-album.dto';
 
 @Injectable()
 export class SingerAlbumService {
-
-  constructor(@InjectRepository(SingerAlbum) private singerAlbumRepository: Repository<SingerAlbum>,
+  constructor(
+    @InjectRepository(SingerAlbum)
+    private singerAlbumRepository: Repository<SingerAlbum>,
     private awsService: AwsService,
-    private songService: SongService) {
-  }
+    private songService: SongService,
+  ) {}
 
   async getAllSingerAlbums(): Promise<SingerAlbum[]> {
     return await this.singerAlbumRepository.find();
@@ -32,13 +35,12 @@ export class SingerAlbumService {
     return singerAlbum;
   }
 
-  async createNewSong(singerAlbumId: number, name: string,
-    description: string,
-    artist: string,
-    type: SongType,
-    language: SongLanguage,
+  async createNewSong(
+    singerAlbumId: number,
+    createNewSongDto: CreateNewSongDto,
     source: any,
   ): Promise<Song> {
+    const { name, description, artist, language, type } = createNewSongDto;
     const song = new Song();
     const singerAlbum = await this.getSingerAlbumById(singerAlbumId);
     song.name = name;
@@ -53,9 +55,12 @@ export class SingerAlbumService {
     return savedSong;
   }
 
-  async updateSingerAlbum(id: number, createAlbumDto: CreateAlbumDto): Promise<SingerAlbum> {
+  async updateSingerAlbum(
+    id: number,
+    updateAlbumDto: UpdateAlbumDto,
+  ): Promise<SingerAlbum> {
     const singerAlbum = await this.getSingerAlbumById(id);
-    const { name } = createAlbumDto;
+    const { name } = updateAlbumDto;
     if (name) {
       singerAlbum.name = name;
     }

@@ -1,4 +1,12 @@
-import { BaseEntity, Column, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn, Unique } from 'typeorm';
+import {
+  BaseEntity,
+  Column,
+  Entity,
+  JoinColumn,
+  OneToOne,
+  PrimaryGeneratedColumn,
+  Unique,
+} from 'typeorm';
 import { Gender } from '../../commons/enums/index.Enum';
 import { User } from '../auth/entities/user.entity';
 import { Favorite } from '../favorite/favorite.entity';
@@ -16,51 +24,56 @@ export class Profile extends BaseEntity {
   lastName: string;
 
   @Column({
-    nullable: true
+    nullable: true,
   })
   gender: Gender;
 
   @Column({
-    nullable: true
+    nullable: true,
   })
   age: number;
 
   @Column({
-    nullable: true
+    nullable: true,
   })
   country: string;
 
   @Column({
-    nullable: true
+    nullable: true,
   })
   city: string;
 
   @Column({
-    nullable: true
+    nullable: true,
   })
   address: string;
 
   @Column({
-    nullable: true
+    nullable: true,
   })
   phone: string;
 
   @Column({
-    nullable: true
+    nullable: true,
   })
   image: string;
 
-
-  @OneToOne(type => User, user => user.profile, {
-    eager: true
-  })
+  @OneToOne(
+    type => User,
+    user => user.profile,
+    {
+      eager: true,
+    },
+  )
   user: User;
 
-  @OneToOne(type => Favorite, favorite => favorite.profile)
+  @OneToOne(
+    type => Favorite,
+    favorite => favorite.profile,
+  )
   @JoinColumn()
   favorite: Favorite;
 
   @Column()
   favoriteId: number;
-
 }

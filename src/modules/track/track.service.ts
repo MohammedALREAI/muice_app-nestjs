@@ -7,11 +7,11 @@ import { Music } from '../music/music.entity';
 import { Favorite } from '../favorite/favorite.entity';
 import { Playlist } from '../playlist/playlist.entity';
 
-
 @Injectable()
 export class TrackService {
-  constructor(@InjectRepository(Track) private trackRepository: Repository<Track>) {
-  }
+  constructor(
+    @InjectRepository(Track) private trackRepository: Repository<Track>,
+  ) {}
 
   async pushToFavoriteList(song: Song, music: Music, favorite: Favorite) {
     let track = new Track();

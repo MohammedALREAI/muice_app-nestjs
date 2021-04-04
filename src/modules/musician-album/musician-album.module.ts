@@ -7,15 +7,17 @@ import { MusicianAlbumService } from './musician-album.service';
 import { PassportModule } from '@nestjs/passport';
 import { MusicModule } from '../music/music.module';
 import { AuthJwt } from '../../config';
-AuthJwt
 @Module({
-  imports: [TypeOrmModule.forFeature([MusicianAlbum]), AwsModule,
-  PassportModule.register({
-    defaultStrategy: AuthJwt.strategies[0],
-  }), MusicModule],
+  imports: [
+    TypeOrmModule.forFeature([MusicianAlbum]),
+    AwsModule,
+    PassportModule.register({
+      defaultStrategy: AuthJwt.strategies[0],
+    }),
+    MusicModule,
+  ],
   controllers: [MusicianAlbumController],
   providers: [MusicianAlbumService],
-  exports: [MusicianAlbumService]
+  exports: [MusicianAlbumService],
 })
-export class MusicianAlbumModule {
-}
+export class MusicianAlbumModule {}
