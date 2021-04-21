@@ -5,13 +5,13 @@ import { PlaylistService } from './playlist.service';
 import { PassportModule } from '@nestjs/passport';
 import { PlaylistRepository } from './playlist.repository';
 import { TrackModule } from '../track/track.module';
-import { AuthJwt } from '../../config';
+import { Config } from './../../config';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([PlaylistRepository]),
     PassportModule.register({
-      defaultStrategy: AuthJwt.strategies[0],
+      defaultStrategy: Config.Auth.Jwt.strategies[0],
     }),
     TrackModule,
   ],

@@ -1,3 +1,5 @@
+import { Config } from './../../config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { forwardRef, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserRepository } from './repositories/user.repository';
@@ -15,17 +17,16 @@ import { ChatModule } from '../../shared/modules/chat/chat.module';
 import { NotificationModule } from '../notification/notification.module';
 import { GoogleStrategy } from './stratigies/google.strategy';
 import { FacebookStrategy } from './stratigies/facebook.strategy';
-import myConfig from '../../config';
-const config = myConfig().AuthJwt;
 @Module({
   imports: [
+    ConfigModule,
     PassportModule.register({
       defaultStrategy: 'jwt',
     }),
     JwtModule.register({
-      secret: 'SOMEtEXTFROyou',
+      secret: Config.Auth.Jwt.secretKey,
       signOptions: {
-        expiresIn: config.expiresIn,
+        expiresIn:  Config.Auth.Jwt.expiresIn,
       },
     }),
     TypeOrmModule.forFeature([
@@ -39,7 +40,7 @@ const config = myConfig().AuthJwt;
     NotificationModule,
     forwardRef(() => ChatModule),
   ],
-  providers: [AuthService, JwtStrategy, GoogleStrategy, FacebookStrategy],
+  providers: [AuthService, JwtStrategy, GoogleStrategy, FacebookStrategy,ConfigService],
   controllers: [AuthController],
   exports: [
     AuthService,

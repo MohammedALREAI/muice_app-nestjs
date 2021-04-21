@@ -21,11 +21,14 @@ import {
   ApiResponse,
   ApiTags,
   ApiInternalServerErrorResponse,
+  ApiBearerAuth,
 } from '@nestjs/swagger';
 
 @UseGuards(AuthGuard(), UserAuthGuard)
 @Roles([Role.USER])
 @Controller('favorite-lists')
+@ApiBearerAuth("jwt")
+
 export class FavoriteController {
   constructor(private favoriteListService: FavoriteService) {}
 

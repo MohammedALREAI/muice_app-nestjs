@@ -1,29 +1,34 @@
+import { SwaggerModule } from '@nestjs/swagger';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import * as webPush from 'web-push';
-import { SwaggerModule } from '@nestjs/swagger';
+import { Logger } from "@nestjs/common";
+
 import { createDocument } from './swagger/swagger';
 import { join } from 'path';
-import { ConfigService } from '@nestjs/config';
 import * as dotenv from 'dotenv';
-import { vapidKeys } from './config';
+import { Config } from './config';
 dotenv.config();
 
 const bootstrap = async () => {
-  const app = await NestFactory.create<NestExpressApplication>(AppModule);
+  const app = await NestFactory.create<NestExpressApplication>(AppModule,{logger:new Logger()});
   app.useStaticAssets(join(__dirname, '..', '/files'));
   app.setGlobalPrefix('api/v1');
   app.enableCors();
-  const configService = app.get(ConfigService);
   SwaggerModule.setup('api', app, createDocument(app));
 
-  webPush.setVapidDetails(
-    'mailto:example@yourdomain.org',
-    vapidKeys.publicKey,
-    vapidKeys.privateKey,
-  );
+webPush.setVapidDetails(
+    "mailto:mhamad.aa1997.aa@gmail.com",
+    Config.vapidKeys.publicKey,
+    Config.vapidKeys.privateKey,
+    );
 
-  await app.listen(configService.get('PORT'));
-};
-bootstrap();
+    await app.listen(process.env.PORT || 4000, () => {
+      Logger.log(`🚀  Server is listening on port ${process.env.PORT}`, "Bootstrap", false);
+    });
+  };
+bootstrap().catch(e => {
+  Logger.error(`❌  Error starting server, ${e}`, "", "Bootstrap", false);
+  throw e;
+});

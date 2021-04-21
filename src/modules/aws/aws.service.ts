@@ -1,14 +1,16 @@
+import { Config } from './../../config';
 import { Injectable } from '@nestjs/common';
 import * as AWS from 'aws-sdk';
 import { extname } from 'path';
+
 
 @Injectable()
 export class AwsService {
   constructor(private s3: AWS.S3) {
     this.s3 = new AWS.S3();
     AWS.config.update({
-      accessKeyId: process.env.ACCESS_KEY_ID,
-      secretAccessKey: process.env.SECRET_ACCESS_KEY,
+      accessKeyId: Config.AWS.ACCESS_KEY_ID,
+      secretAccessKey: Config.AWS.SECRET_ACCESS_KEY,
     });
   }
 
@@ -21,7 +23,7 @@ export class AwsService {
         .map(() => Math.round(Math.random() * 16).toString(16))
         .join('');
       const params: AWS.S3.Types.PutObjectRequest = {
-        Bucket: process.env.AWS_S3_BUCKET_NAME,
+        Bucket: Config.AWS.AWS_S3_BUCKET_NAME,
         Key: `${folderName}/${name}-${randomName}${fileExtName}`,
         Body: file.buffer,
         ACL: 'public-read',
@@ -30,7 +32,7 @@ export class AwsService {
         if (err) {
           return reject(err);
         }
-        resolve(`${process.env.cdnUrl}/${data.Key}`);
+        resolve(`${Config.AWS.cdnUrl}/${data.Key}`);
       });
     });
   }

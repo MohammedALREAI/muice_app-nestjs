@@ -1,3 +1,4 @@
+import { not_found } from './../../commons/helpers/error';
 import { GetByIdDto } from './../../commons/dto/getByID';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -27,7 +28,7 @@ export class FavoriteService {
     } else if (profile) {
       favoriteList = await this.favoriteRepository.findOne({ profile });
     } else {
-      throw new NotFoundException('Favorite list does not found');
+      not_found({msg:"the favoverit list not found",raise:false})    
     }
     return favoriteList;
   }
@@ -36,7 +37,7 @@ export class FavoriteService {
     await this.clearFavoriteListContent(id);
     const result = await this.favoriteRepository.delete(id);
     if (result.affected === 0) {
-      throw new NotFoundException('favorite list does not found');
+      not_found({msg:"the favoverit list not found",raise:false})    
     }
   }
 

@@ -1,20 +1,22 @@
+import { ConfigService } from '@nestjs/config';
 import { Injectable } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { Strategy } from 'passport-facebook';
 import { UserRepository } from '../repositories/user.repository';
 import { AuthService } from '../auth.service';
-import { oAuthFacebook } from '../../../config';
 @Injectable()
 export class FacebookStrategy extends PassportStrategy(Strategy, 'facebook') {
+  
   constructor(
+    private configService: ConfigService,
     private userRepository: UserRepository,
     private authService: AuthService,
   ) {
     super({
-      clientID: oAuthFacebook.FACEBOOK_CLIENT_ID,
-      clientSecret: oAuthFacebook.FACEBOOK_SECRET_ID,
-      callbackURL: oAuthFacebook.CALL_BACK_URI,
-      scope: oAuthFacebook.SCOPE,
+      clientID:process.env.FACEBOOK_SECRET_ID,
+      clientSecret:process.env.FACEBOOK_SECRET_ID,
+      callbackURL:process.env.CALL_BACK_URI,
+      scope: ['email'],
       profileFields: ['id', 'displayName', 'email', 'photos', 'name'],
     });
   }

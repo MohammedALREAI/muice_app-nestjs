@@ -6,13 +6,13 @@ import { AwsModule } from '../../shared/modules/aws/aws.module';
 import { MusicianAlbumService } from './musician-album.service';
 import { PassportModule } from '@nestjs/passport';
 import { MusicModule } from '../music/music.module';
-import { AuthJwt } from '../../config';
+import { Config } from '../../config';
 @Module({
   imports: [
     TypeOrmModule.forFeature([MusicianAlbum]),
     AwsModule,
     PassportModule.register({
-      defaultStrategy: AuthJwt.strategies[0],
+      defaultStrategy: Config.Auth.Jwt.strategies[0],
     }),
     MusicModule,
   ],

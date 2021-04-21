@@ -29,15 +29,18 @@ import {
   ApiTags,
   ApiInternalServerErrorResponse,
   ApiParam,
+  ApiBearerAuth,
 } from '@nestjs/swagger';
 
 @UseGuards(AuthGuard(), AcceptedAuthGuard)
 @Roles([Role.ADMIN, Role.USER])
+@ApiBearerAuth("JWT")
+@ApiTags('profiles')
+
 @Controller('profiles')
 export class ProfileController {
   constructor(private profileService: ProfileService) {}
 
-  @ApiTags('profiles')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ description: 'get all the getUserPlaylists ' })
   @ApiResponse({ description: 'Ok' })
@@ -59,7 +62,7 @@ export class ProfileController {
     return this.profileService.getProfileData(user);
   }
 
-  @ApiTags('profiles')
+   
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ description: 'get all the getUserPlaylists ' })
   @ApiResponse({ description: 'Ok' })
@@ -79,7 +82,7 @@ export class ProfileController {
     return this.profileService.setProfileImage(user, image);
   }
 
-  @ApiTags('profiles')
+   
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ description: 'get all the getUserPlaylists ' })
   @ApiResponse({ description: 'Ok' })
@@ -99,7 +102,7 @@ export class ProfileController {
     return this.profileService.changeProfileImage(user, image);
   }
 
-  @ApiTags('profiles')
+   
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ description: 'get all the getUserPlaylists ' })
   @ApiResponse({ description: 'Ok' })
@@ -118,7 +121,7 @@ export class ProfileController {
     return this.profileService.editProfile(user, updateProfileDto);
   }
 
-  @ApiTags('profiles')
+   
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ description: 'get all the getUserPlaylists ' })
   @ApiResponse({ description: 'Ok' })

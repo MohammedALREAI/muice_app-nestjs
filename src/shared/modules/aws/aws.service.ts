@@ -1,12 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import * as AWS from 'aws-sdk';
 import { extname } from 'path';
-import myConfig from '../../../config';
-const config = myConfig();
 const s3 = new AWS.S3();
 AWS.config.update({
-  accessKeyId: config.aws.ACCESS_KEY_ID,
-  secretAccessKey: config.aws.SECRET_ACCESS_KEY,
+  accessKeyId: process.env.ACCESS_KEY_ID||"",
+  secretAccessKey: process.env.SECRET_ACCESS_KEY||"",
 });
 @Injectable()
 export class AwsService {
@@ -28,7 +26,7 @@ export class AwsService {
         if (err) {
           return reject(err);
         }
-        resolve(`${config.aws.cdnUrl}/${data.Key}`);
+        resolve(`${process.env.cdnUrl}/${data.Key}`);
       });
     });
   }

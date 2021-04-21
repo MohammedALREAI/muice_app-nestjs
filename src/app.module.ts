@@ -1,3 +1,4 @@
+import { LoggerModule } from './shared/modules/logger/logger.module';
 import { AwsModule } from './modules/aws/aws.module';
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -17,26 +18,19 @@ import { NodemailerModule } from '@crowdlinker/nestjs-mailer';
 import { ChatModule } from './shared/modules/chat/chat.module';
 import { AppController } from './app.controller';
 import { MulterModule } from '@nestjs/platform-express';
-import { ConfigModule } from '@nestjs/config';
-import configuration from './config';
 import { DatabaseConnectionService } from './DatabaseConnectionService ';
-
-const nodeMailerOptions = configuration().nodeMailerOptions;
+import { Config } from './config';
 @Module({
   imports: [
-    ConfigModule.forRoot({
-      isGlobal: true,
-      load: [configuration],
-      ignoreEnvFile: true,
-      envFilePath: '.env',
-    }),
+    LoggerModule,
+
     TypeOrmModule.forRootAsync({
       useClass: DatabaseConnectionService,
     }),
     MulterModule.register({
       dest: './files',
     }),
-    NodemailerModule.forRoot(nodeMailerOptions),
+    NodemailerModule.forRoot(Config.nodeMailerOptions),
     AuthModule,
     ChatModule,
     ProfileModule,

@@ -35,15 +35,19 @@ import {
   ApiInternalServerErrorResponse,
   ApiQuery,
   ApiParam,
+  ApiBearerAuth,
 } from '@nestjs/swagger';
 
 @Controller('musicians')
+@ApiTags('musicians')
+@ApiBearerAuth("jwt")
+
 export class MusicianController {
   constructor(private musicianService: MusicianService) {}
 
   //localhost:3000/musicians
 
-  @ApiTags('musicians')
+   
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ description: 'get all the get All Musicians ' })
   @ApiResponse({ description: 'Ok' })
@@ -59,7 +63,7 @@ export class MusicianController {
     return this.musicianService.getAllMusicians();
   }
 
-  @ApiTags('musicians')
+   
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ description: 'get all the get All Musicians ' })
   @ApiResponse({ description: 'Ok' })
@@ -103,7 +107,7 @@ export class MusicianController {
     );
   }
 
-  @ApiTags('musicians')
+   
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ description: 'get all the get All Musicians ' })
   @ApiResponse({ description: 'Ok' })
@@ -121,7 +125,7 @@ export class MusicianController {
   }
 
   //localhost:3000/musicians
-  @ApiTags('musicians')
+   
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ description: 'get all the get All Musicians ' })
   @ApiResponse({ description: 'Ok' })
@@ -152,7 +156,7 @@ export class MusicianController {
   }
 
   //localhost:3000/musicians/:
-  @ApiTags('musicians')
+   
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ description: 'get all the get All Musicians ' })
   @ApiResponse({ description: 'Ok' })
@@ -174,7 +178,7 @@ export class MusicianController {
     return this.musicianService.getMusicianById(id);
   }
 
-  @ApiTags('musicians')
+   
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ description: 'get all the get All Musicians ' })
   @ApiResponse({ description: 'Ok' })
@@ -201,7 +205,7 @@ export class MusicianController {
     return this.musicianService.createNewAlbum(id, createAlbumDto);
   }
 
-  @ApiTags('musicians')
+   
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ description: 'get all the get All Musicians ' })
   @ApiResponse({ description: 'Ok' })
@@ -239,7 +243,7 @@ export class MusicianController {
     );
   }
 
-  @ApiTags('musicians')
+   
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ description: 'get all the get All Musicians ' })
   @ApiResponse({ description: 'Ok' })

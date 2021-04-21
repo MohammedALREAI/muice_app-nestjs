@@ -1,3 +1,4 @@
+import { GetFilteredMusicsQuery } from './dto/getFilteredMusics.dto';
 import { GetPlaylistIdDto } from './../../commons/dto/getByID';
 import { UpdateMusicDto } from './dto/updateMusic';
 import {
@@ -21,7 +22,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { AuthGuard } from '@nestjs/passport';
 import { UserAuthGuard } from '../../commons/guards/user-auth.guard';
 import { Roles } from '../../commons/decorators/roles.decorator';
-import { Role, MusicType } from '../../commons/enums/index.Enum';
+import { Role } from '../../commons/enums/index.Enum';
 import { AdminAuthGuard } from '../../commons/guards/admin-auth.guard';
 import {
   ApiBadRequestResponse,
@@ -31,14 +32,16 @@ import {
   ApiInternalServerErrorResponse,
   ApiQuery,
   ApiParam,
+  ApiBearerAuth,
 } from '@nestjs/swagger';
 import {
   GetByIdDto,
   GetByMusicIdDto,
   GetLimitDto,
 } from '../../commons/dto/getByID';
-
+@ApiTags("musics")
 @Controller('musics')
+@ApiBearerAuth("jwt or passport ")
 export class MusicController {
   constructor(private musicService: MusicService) {}
 
@@ -46,7 +49,7 @@ export class MusicController {
    * getAllMusics
    * @returns
    */
-  @ApiTags('musics')
+ 
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ description: 'get all the muisc ' })
   @ApiResponse({ description: 'Ok' })
@@ -67,7 +70,7 @@ export class MusicController {
    * @param limit
    * @returns
    */
-  @ApiTags('musics')
+ 
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ description: 'get getLimitedMusics ' })
   @ApiResponse({ description: 'Ok' })
@@ -93,13 +96,11 @@ export class MusicController {
    * @returns
    */
 
-  @ApiTags('musics')
+ 
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ description: 'get all the filtered ' })
   @ApiResponse({ description: 'Ok' })
-  @ApiQuery({ name: 'type', enum: MusicType, required: true })
-  @ApiQuery({ name: 'rate', required: true })
-  @ApiQuery({ name: 'limit', required: true, type: GetLimitDto })
+  @ApiQuery({ name: 'getFilteredMusicsQuery', type:GetFilteredMusicsQuery, required: true })
   @ApiBadRequestResponse({
     description: 'bad Request with get clearFavoriteList FavoriteList ',
   })
@@ -109,10 +110,9 @@ export class MusicController {
   })
   @Get('filtered')
   getFilteredMusics(
-    @Query('limit') { limit }: GetLimitDto,
-    @Query('type') type: MusicType,
-    @Query('rate') rate: number,
+    @Query('getFilteredMusicsQuery') getFilteredMusicsQuery:GetFilteredMusicsQuery
   ) {
+    const {limit,type,rate}=getFilteredMusicsQuery
     return this.musicService.getFilteredMusics(limit, type, rate);
   }
 
@@ -122,7 +122,7 @@ export class MusicController {
    * @returns
    */
 
-  @ApiTags('musics')
+ 
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ description: 'get all the getMusicById ' })
   @ApiResponse({ description: 'Ok' })
@@ -152,7 +152,7 @@ export class MusicController {
    * @returns
    */
 
-  @ApiTags('musics')
+ 
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ description: 'updateMusic  the muisc ' })
   @ApiResponse({ description: 'Ok' })
@@ -189,7 +189,7 @@ export class MusicController {
    * @param id
    * @returns
    */
-  @ApiTags('musics')
+ 
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ description: 'get all the muisc ' })
   @ApiResponse({ description: 'Ok' })
@@ -214,7 +214,7 @@ export class MusicController {
  
    * @returns 
    */
-  @ApiTags('musics')
+ 
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ description: 'get all the muisc ' })
   @ApiResponse({ description: 'Ok' })
@@ -248,7 +248,7 @@ export class MusicController {
    * @returns
    */
 
-  @ApiTags('musics')
+ 
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ description: 'saveToFavoriteList ' })
   @ApiResponse({ description: 'Ok' })

@@ -1,9 +1,9 @@
-import { nodeMailerOptions } from '../../config';
+import { Config } from '../../config';
 export const template = {
   VerifyEmail: (from: string, to: string, url) => {
     return {
-      from: '"Company" <' + nodeMailerOptions.transport.auth.username + '>',
-      to: nodeMailerOptions.transport.auth.username,
+      from: '"Company" <' + Config.nodeMailerOptions.transport.auth.username + '>',
+      to: Config.nodeMailerOptions.transport.auth.username,
       subject: 'Verify Email',
       text: 'Verify Email',
       html: `<h1>Hi User</h1> <br><br> <h2>Thanks for your registration</h2>

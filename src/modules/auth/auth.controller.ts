@@ -34,14 +34,17 @@ import {
   ApiBadRequestResponse,
   ApiInternalServerErrorResponse,
   ApiParam,
+  ApiBearerAuth,
 } from '@nestjs/swagger';
 
 @Controller('auth')
+@ApiTags('Auth')
+
 export class AuthController {
   constructor(private authService: AuthService) {}
 
   @Post('register')
-  @ApiTags('Auth')
+  
   @HttpCode(HttpStatus.CREATED)
   @ApiOperation({ description: 'register new user ' })
   @ApiResponse({ description: 'Ok' })
@@ -57,7 +60,7 @@ export class AuthController {
     return this.authService.signUp(authCredentialsDto, createProfileDto);
   }
 
-  @ApiTags('Auth')
+  
   @HttpCode(HttpStatus.ACCEPTED)
   @ApiOperation({ description: 'verify new user ' })
   @ApiResponse({ description: 'Ok' })
@@ -71,7 +74,11 @@ export class AuthController {
     await this.authService.createEmailToken(email);
     return this.authService.sendEmailVerification(email);
   }
-
+  
+  @HttpCode(HttpStatus.ACCEPTED)
+  @ApiOperation({ description: 'callback facebook new user ' })
+  @ApiResponse({ description: 'Ok' })
+  @ApiBadRequestResponse({ description: 'bad Request with verification ' })
   @Get('email/verify/:token')
   verifyEmail(@Param('token') token: string) {
     return this.authService.verifyEmail(token);
@@ -79,7 +86,7 @@ export class AuthController {
 
   /*                  Social Endpoints                   */
 
-  @ApiTags('Auth')
+  
   @HttpCode(HttpStatus.ACCEPTED)
   @ApiOperation({ description: 'verify new user by google ' })
   @ApiResponse({ description: 'Ok' })
@@ -92,7 +99,7 @@ export class AuthController {
 
   // related to callback --> redirection to frontend
 
-  @ApiTags('Auth')
+  
   @HttpCode(HttpStatus.ACCEPTED)
   @ApiOperation({ description: 'callback google new user ' })
   @ApiResponse({ description: 'Ok' })
@@ -110,7 +117,11 @@ export class AuthController {
       res.redirect('http://localhost:4200/auth/google-failure');
     }
   }
-
+  
+  @HttpCode(HttpStatus.ACCEPTED)
+  @ApiOperation({ description: 'callback facebook new user ' })
+  @ApiResponse({ description: 'Ok' })
+  @ApiBadRequestResponse({ description: 'bad Request with verification ' })
   @Get('facebook')
   @UseGuards(AuthGuard('facebook'))
   facebookLogin() {
@@ -119,7 +130,7 @@ export class AuthController {
 
   // related to callback --> redirection to frontend
 
-  @ApiTags('Auth')
+  
   @HttpCode(HttpStatus.ACCEPTED)
   @ApiOperation({ description: 'callback facebook new user ' })
   @ApiResponse({ description: 'Ok' })
@@ -137,9 +148,19 @@ export class AuthController {
       res.redirect('http://localhost:4200/auth/facebook-failure');
     }
   }
+  
 
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ description: 'login   user ' })
+  @ApiResponse({ description: 'Ok' })
+  @ApiBadRequestResponse({ description: 'bad Request with verification ' })
+  @ApiInternalServerErrorResponse({
+    description:
+      'data has been send but there is issiue in server so try later ',
+  })
+  
+  @HttpCode(HttpStatus.ACCEPTED)
+  @ApiOperation({ description: 'get getUserMainData ' })
   @ApiResponse({ description: 'Ok' })
   @ApiBadRequestResponse({ description: 'bad Request with verification ' })
   @ApiInternalServerErrorResponse({
@@ -150,18 +171,39 @@ export class AuthController {
   signInUser(@Body() emailLoginDto: EmailLoginDto) {
     return this.authService.signInUser(emailLoginDto);
   }
-
+  
+  @HttpCode(HttpStatus.ACCEPTED)
+  @ApiOperation({ description: 'get getUserMainData ' })
+  @ApiResponse({ description: 'Ok' })
+  @ApiBadRequestResponse({ description: 'bad Request with verification ' })
+  @ApiInternalServerErrorResponse({
+    description:
+      'data has been send but there is issiue in server so try later ',
+  })
+  
+  @HttpCode(HttpStatus.ACCEPTED)
+  @ApiOperation({ description: 'callback facebook new user ' })
+  @ApiResponse({ description: 'Ok' })
+  @ApiBadRequestResponse({ description: 'bad Request with verification ' })
   @Get('email/forgot-password/:email')
   sendEmailForgotPassword(@Param('email') email: string) {
     return this.authService.sendEmailForgottenPassword(email);
   }
-
+  
+  @HttpCode(HttpStatus.ACCEPTED)
+  @ApiOperation({ description: 'get getUserMainData ' })
+  @ApiResponse({ description: 'Ok' })
+  @ApiBadRequestResponse({ description: 'bad Request with verification ' })
+  @ApiInternalServerErrorResponse({
+    description:
+      'data has been send but there is issiue in server so try later ',
+  })
   @Post('email/reset-password')
   setNewPassword(@Body() resetPasswordDto: ResetPasswordDto) {
     return this.authService.setNewPassword(resetPasswordDto);
   }
 
-  @ApiTags('Auth')
+  
   @HttpCode(HttpStatus.ACCEPTED)
   @ApiOperation({ description: 'get getUserMainData ' })
   @ApiResponse({ description: 'Ok' })
@@ -171,13 +213,14 @@ export class AuthController {
       'data has been send but there is issiue in server so try later ',
   })
   @Get('user-main-data')
+  @ApiBearerAuth("jwt")
   @UseGuards(AuthGuard('jwt'), AcceptedAuthGuard)
   @Roles([Role.USER, Role.ADMIN])
   getUserData(@GetAuthenticatedUser() user: User) {
     return this.authService.getUserMainData(user);
   }
 
-  @ApiTags('User')
+  
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ description: 'get getUserMainData ' })
   @ApiResponse({ description: 'Ok' })
@@ -186,17 +229,30 @@ export class AuthController {
     description:
       'data has been send but there is issiue in server so try later ',
   })
+
+  @ApiBearerAuth("jwt")
+
+  @HttpCode(HttpStatus.ACCEPTED)
+  @ApiOperation({ description: 'callback facebook new user ' })
+  @ApiResponse({ description: 'Ok' })
+  @ApiBadRequestResponse({ description: 'bad Request with verification ' })
   @Delete('delete-user-account')
   @UseGuards(AuthGuard(), UserAuthGuard)
   @Roles([Role.USER])
   deleteUserAccount(@GetAuthenticatedUser() user: User) {
     return this.authService.deleteUserAccount(user);
   }
-
+  @ApiBearerAuth("jwt")  
+  @HttpCode(HttpStatus.ACCEPTED)
+  @ApiOperation({ description: 'callback facebook new user ' })
+  @ApiResponse({ description: 'Ok' })
+  @ApiBadRequestResponse({ description: 'bad Request with verification ' })
   @Get('check-username/:username')
   isValidUsername(@Param('username') username: string) {
     return this.authService.isValidUsername(username);
   }
+  
+
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ description: 'login   user Admin ' })
   @ApiResponse({ description: 'Ok' })
@@ -209,14 +265,20 @@ export class AuthController {
   signInAdmin(@Body() emailLoginDto: EmailLoginDto) {
     return this.authService.signInAdmin(emailLoginDto);
   }
+  @ApiBearerAuth("jwt")
 
+  @HttpCode(HttpStatus.ACCEPTED)
+  @ApiOperation({ description: 'callback facebook new user ' })
+  @ApiResponse({ description: 'Ok' })
+  @ApiBadRequestResponse({ description: 'bad Request with verification ' })
   @Get('system-users')
   @UseGuards(AuthGuard(), AdminAuthGuard)
   @Roles([Role.ADMIN])
   getSystemUsers() {
     return this.authService.getSystemUsers();
   }
-
+  
+  @ApiBearerAuth("jwt")
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ description: 'get user   by id ' })
   @ApiParam({ name: 'id', description: 'user id ' })
@@ -230,6 +292,8 @@ export class AuthController {
   getUserById(@Param('id', ParseIntPipe) id: number) {
     return this.authService.getUserById(id);
   }
+  
+  @ApiBearerAuth("jwt")
 
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ description: 'get user   by id ' })

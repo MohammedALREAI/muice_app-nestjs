@@ -35,14 +35,17 @@ import {
   ApiParam,
   ApiQuery,
   ApiBody,
+  ApiBearerAuth,
 } from '@nestjs/swagger';
 
 @Controller('singers')
+@ApiBearerAuth("JWT")
+@ApiTags('singers')
+
 export class SingerController {
   constructor(private singerService: SingerService) {}
 
-  @ApiTags('singers')
-  @HttpCode(HttpStatus.OK)
+   @HttpCode(HttpStatus.OK)
   @ApiOperation({ description: 'get all the getUserPlaylists ' })
   @ApiResponse({ description: 'Ok' })
   @ApiBadRequestResponse({
@@ -57,8 +60,7 @@ export class SingerController {
     return this.singerService.getAllSingers();
   }
 
-  @ApiTags('singers')
-  @HttpCode(HttpStatus.OK)
+   @HttpCode(HttpStatus.OK)
   @ApiOperation({ description: 'get all the getUserPlaylists ' })
   @ApiResponse({ description: 'Ok' })
   @ApiBadRequestResponse({
@@ -80,8 +82,7 @@ export class SingerController {
     return this.singerService.getFilteredSingers(getQuerySingers);
   }
 
-  @ApiTags('singers')
-  @HttpCode(HttpStatus.OK)
+   @HttpCode(HttpStatus.OK)
   @ApiOperation({ description: 'get all the getUserPlaylists ' })
   @ApiResponse({ description: 'Ok' })
   @ApiBadRequestResponse({
@@ -103,8 +104,7 @@ export class SingerController {
 
   //localhost:3000/singers
 
-  @ApiTags('singers')
-  @HttpCode(HttpStatus.OK)
+   @HttpCode(HttpStatus.OK)
   @ApiOperation({ description: 'get all the getUserPlaylists ' })
   @ApiResponse({ description: 'Ok' })
   @ApiBadRequestResponse({
@@ -127,8 +127,7 @@ export class SingerController {
   }
 
   //localhost:3000/singers/:id
-  @ApiTags('singers')
-  @HttpCode(HttpStatus.OK)
+   @HttpCode(HttpStatus.OK)
   @ApiOperation({ description: 'get all the getUserPlaylists ' })
   @ApiResponse({ description: 'Ok' })
   @ApiBadRequestResponse({
@@ -144,8 +143,7 @@ export class SingerController {
     return this.singerService.getSingerById(id);
   }
 
-  @ApiTags('singers')
-  @HttpCode(HttpStatus.OK)
+   @HttpCode(HttpStatus.OK)
   @ApiOperation({ description: 'get all the getUserPlaylists ' })
   @ApiResponse({ description: 'Ok' })
   @ApiBadRequestResponse({
@@ -167,8 +165,7 @@ export class SingerController {
     return this.singerService.createNewAlbum(id, createNewSingerDto);
   }
 
-  @ApiTags('singers')
-  @HttpCode(HttpStatus.OK)
+   @HttpCode(HttpStatus.OK)
   @ApiOperation({ description: 'get all the getUserPlaylists ' })
   @ApiResponse({ description: 'Ok' })
   @ApiBadRequestResponse({
@@ -192,8 +189,7 @@ export class SingerController {
     return this.singerService.updateSinger(id, updateNewSingerDt, image);
   }
 
-  @ApiTags('singers')
-  @HttpCode(HttpStatus.OK)
+   @HttpCode(HttpStatus.OK)
   @ApiOperation({ description: 'get all the getUserPlaylists ' })
   @ApiResponse({ description: 'Ok' })
   @ApiBadRequestResponse({

@@ -35,13 +35,16 @@ import {
   ApiParam,
   ApiQuery,
   ApiBody,
+  ApiBearerAuth,
 } from '@nestjs/swagger';
 
 @Controller('songs')
+@ApiTags('songs')
+@ApiBearerAuth("JWT")
 export class SongController {
   constructor(private songService: SongService) {}
 
-  @ApiTags('songs')
+ 
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ description: 'get all the song ' })
   @ApiResponse({ description: 'Ok' })
@@ -57,7 +60,7 @@ export class SongController {
     return this.songService.getAllSongs();
   }
 
-  @ApiTags('songs')
+ 
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ description: 'get all the song ' })
   @ApiResponse({ description: 'Ok' })
@@ -78,7 +81,7 @@ export class SongController {
     return this.songService.getLimitedSongs(limit);
   }
 
-  @ApiTags('songs')
+ 
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ description: 'get all the song ' })
   @ApiResponse({ description: 'Ok' })
@@ -99,7 +102,7 @@ export class SongController {
     return this.songService.getFilteredSong(getQuerySingers);
   }
 
-  @ApiTags('songs')
+ 
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ description: 'get all the song ' })
   @ApiResponse({ description: 'Ok' })
@@ -116,7 +119,7 @@ export class SongController {
     return this.songService.getSongById(id);
   }
 
-  @ApiTags('songs')
+ 
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ description: 'get all the song ' })
   @ApiResponse({ description: 'Ok' })

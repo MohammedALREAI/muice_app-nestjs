@@ -8,7 +8,7 @@ import { FavoriteModule } from '../favorite/favorite.module';
 import { PassportModule } from '@nestjs/passport';
 import { PlaylistModule } from '../playlist/playlist.module';
 import { TrackModule } from '../track/track.module';
-import { AuthJwt } from '../../config';
+import { Config } from './../../config';
 
 @Module({
   imports: [
@@ -16,7 +16,7 @@ import { AuthJwt } from '../../config';
     AwsModule,
     FavoriteModule,
     PassportModule.register({
-      defaultStrategy: AuthJwt.strategies[0],
+      defaultStrategy: Config.Auth.Jwt.strategies[0],
     }),
     PlaylistModule,
     TrackModule,

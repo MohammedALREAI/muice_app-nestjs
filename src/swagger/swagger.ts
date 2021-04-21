@@ -11,10 +11,10 @@ export function createDocument(app: INestApplication): OpenAPIObject {
       { type: 'http', scheme: 'bearer', bearerFormat: 'JWT' },
       'access-token',
     )
-    .setVersion(SWAGGER_CONFIG.version);
-  for (const tag of SWAGGER_CONFIG.tags) {
-    builder.addTag(tag);
-  }
+    .setVersion(SWAGGER_CONFIG.version).
+    setLicense(SWAGGER_CONFIG.license,"https://github.com/MohammedALREAI")
+
+ 
   const options = builder.build();
   return SwaggerModule.createDocument(app, options);
 }

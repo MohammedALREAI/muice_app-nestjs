@@ -1,3 +1,4 @@
+import { Config } from './../../config';
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { NotificationEntity } from './entities/notification.entity';
@@ -6,7 +7,6 @@ import { SubscribersNotifications } from './entities/subscribers-notifications.e
 import { PassportModule } from '@nestjs/passport';
 import { NotificationController } from './notification.controller';
 import { NotificationService } from './notification.service';
-import { AuthJwt } from '../../config';
 
 @Module({
   imports: [
@@ -16,7 +16,7 @@ import { AuthJwt } from '../../config';
       SubscribersNotifications,
     ]),
     PassportModule.register({
-      defaultStrategy: AuthJwt.strategies[0],
+      defaultStrategy: Config.Auth.Jwt.strategies[0],
     }),
   ],
   providers: [NotificationService],

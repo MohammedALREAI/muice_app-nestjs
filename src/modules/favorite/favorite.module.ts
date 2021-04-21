@@ -5,13 +5,14 @@ import { PassportModule } from '@nestjs/passport';
 import { FavoriteController } from './favorite.controller';
 import { FavoriteService } from './favorite.service';
 import { TrackModule } from '../track/track.module';
-import { AuthJwt } from '../../config';
+import { Config } from './../../config';
+
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([Favorite]),
     PassportModule.register({
-      defaultStrategy: AuthJwt.strategies[0],
+      defaultStrategy: Config.Auth.Jwt.strategies[0],
     }),
     TrackModule,
   ],

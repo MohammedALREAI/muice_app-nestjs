@@ -27,15 +27,18 @@ import {
   ApiTags,
   ApiInternalServerErrorResponse,
   ApiParam,
+  ApiBearerAuth,
 } from '@nestjs/swagger';
 
 @UseGuards(AuthGuard(), UserAuthGuard)
 @Roles([Role.USER])
+@ApiBearerAuth("JWT")
+@ApiTags('playlists')
+
 @Controller('playlists')
 export class PlaylistController {
   constructor(private playlistService: PlaylistService) {}
 
-  @ApiTags('playlists')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ description: 'get all the getUserPlaylists ' })
   @ApiResponse({ description: 'Ok' })
@@ -51,8 +54,7 @@ export class PlaylistController {
     return this.playlistService.getUserPlaylists(user);
   }
 
-  @ApiTags('playlists')
-  @HttpCode(HttpStatus.OK)
+     @HttpCode(HttpStatus.OK)
   @ApiOperation({ description: 'get all the getUserPlaylists ' })
   @ApiResponse({ description: 'Ok' })
   @ApiBadRequestResponse({
@@ -73,8 +75,7 @@ export class PlaylistController {
     return this.playlistService.getPlaylistById(id);
   }
 
-  @ApiTags('playlists')
-  @HttpCode(HttpStatus.OK)
+     @HttpCode(HttpStatus.OK)
   @ApiOperation({ description: 'get all the getUserPlaylists ' })
   @ApiResponse({ description: 'Ok' })
   @ApiBadRequestResponse({
@@ -92,8 +93,7 @@ export class PlaylistController {
     return this.playlistService.newPlaylist(user, playlistDto);
   }
 
-  @ApiTags('playlists')
-  @HttpCode(HttpStatus.OK)
+     @HttpCode(HttpStatus.OK)
   @ApiOperation({ description: 'get all the getUserPlaylists ' })
   @ApiResponse({ description: 'Ok' })
   @ApiBadRequestResponse({
@@ -122,8 +122,7 @@ export class PlaylistController {
     return this.playlistService.deletePlaylist(id);
   }
 
-  @ApiTags('playlists')
-  @HttpCode(HttpStatus.OK)
+     @HttpCode(HttpStatus.OK)
   @ApiOperation({ description: 'get all the getUserPlaylists ' })
   @ApiResponse({ description: 'Ok' })
   @ApiBadRequestResponse({
@@ -144,8 +143,7 @@ export class PlaylistController {
     return this.playlistService.clearPlaylistContent(id);
   }
 
-  @ApiTags('playlists')
-  @HttpCode(HttpStatus.OK)
+     @HttpCode(HttpStatus.OK)
   @ApiOperation({ description: 'get all the getUserPlaylists ' })
   @ApiResponse({ description: 'Ok' })
   @ApiBadRequestResponse({

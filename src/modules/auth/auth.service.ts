@@ -1,3 +1,4 @@
+import { ConfigService } from '@nestjs/config';
 import {
   BadRequestException,
   ConflictException,
@@ -20,7 +21,6 @@ import { Role } from '../../commons/enums/index.Enum';
 import { EmailVerification } from './entities/email-verification.entity';
 import { Repository } from 'typeorm';
 import { Nodemailer, NodemailerDrivers } from '@crowdlinker/nestjs-mailer';
-import myconfig from '../../config';
 import { EmailLoginDto } from './dto/email-login.dto';
 import { JwtService } from '@nestjs/jwt';
 import { ForgottenPassword } from './entities/forgotten-password.entity';
@@ -30,7 +30,6 @@ import { FavoriteService } from '../favorite/favorite.service';
 import { PlaylistService } from '../playlist/playlist.service';
 import { ChatService } from '../../shared/modules/chat/chat.service';
 import { NotificationService } from '../notification/notification.service';
-const config = myconfig();
 @Injectable()
 export class AuthService {
   constructor(
@@ -45,7 +44,8 @@ export class AuthService {
     private favoriteService: FavoriteService,
     private playlistService: PlaylistService,
     private notificationService: NotificationService,
-    @Inject(forwardRef(() => ChatService)) private chatService: ChatService,
+    private configService: ConfigService,
+        @Inject(forwardRef(() => ChatService)) private chatService: ChatService,
   ) {}
 
   async signUp(
@@ -237,14 +237,14 @@ export class AuthService {
     const verifiedEmail = await this.emailVerificationRepo.findOne({ email });
     if (verifiedEmail && verifiedEmail.emailToken) {
       const url = `<a style='text-decoration:none;'
-    href= http://${config.frontEndKeys.url}:${config.frontEndKeys.port}/${config.frontEndKeys.endpoints[1]}/${verifiedEmail.emailToken}>Click Here to confirm your email</a>`;
+    href= http://${this.configService.get<string>("frontEndKeys.url")}:${this.configService.get<string>("frontEndKeys.port")}/auth/verify-email/${verifiedEmail.emailToken}>Click Here to confirm your email</a>`;
       await this.nodeMailerService
         .sendMail({
           from:
             '"Company" <' +
-            config.nodeMailerOptions.transport.auth.username +
+            this.configService.get<string>("nodeMailerOptions.transport.auth.username") +
             '>',
-          to: config.nodeMailerOptions.transport.auth.username,
+          to: this.configService.get<string>("nodeMailerOptions.transport.auth.username"),
           subject: 'Verify Email',
           text: 'Verify Email',
           html: `<h1>Hi User</h1> <br><br> <h2>Thanks for your registration</h2>
@@ -304,12 +304,12 @@ export class AuthService {
     const tokenModel = await this.createForgottenPasswordToken(email);
     if (tokenModel && tokenModel.newPasswordToken) {
       const url = `<a style='text-decoration:none;'
-    href= http://${config.frontEndKeys.url}:${config.frontEndKeys.port}/${config.frontEndKeys.endpoints[0]}/${tokenModel.newPasswordToken}>Click here to reset your password</a>`;
+    href= http://$${this.configService.get<string>("frontEndKeys.url")}:${this.configService.get<string>("frontEndKeys.port")}/auth/reset-password/${tokenModel.newPasswordToken}>Click here to reset your password</a>`;
       return await this.nodeMailerService
         .sendMail({
           from:
             '"Company" <' +
-            config.nodeMailerOptions.transport.auth.username +
+            this.configService.get<string>("nodeMailerOptions.transport.auth.username") +
             '>',
           to: email,
           subject: 'Reset Your Password',

@@ -5,13 +5,13 @@ import { AwsModule } from '../../shared/modules/aws/aws.module';
 import { ProfileController } from './profile.controller';
 import { ProfileService } from './profile.service';
 import { PassportModule } from '@nestjs/passport';
-import { AuthJwt } from '../../config';
+import { Config } from './../../config';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([Profile]),
     PassportModule.register({
-      defaultStrategy: AuthJwt.strategies[0],
+      defaultStrategy: Config.Auth.Jwt.strategies[0],
     }),
     AwsModule,
   ],

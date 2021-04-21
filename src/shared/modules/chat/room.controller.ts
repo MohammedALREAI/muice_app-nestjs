@@ -4,6 +4,8 @@ import {
   Controller,
   Delete,
   Get,
+  HttpCode,
+  HttpStatus,
   Param,
   ParseIntPipe,
   Post,
@@ -17,13 +19,27 @@ import { User } from '../../../modules/auth/entities/user.entity';
 import { RoomDto } from './dto/room.dto';
 import { ChatService } from './chat.service';
 import { Role } from '../../../commons/enums/index.Enum';
+import { ApiOperation, ApiResponse, ApiBadRequestResponse, ApiInternalServerErrorResponse ,ApiTags, ApiBearerAuth} from '@nestjs/swagger';
 
 @UseGuards(AuthGuard(), UserAuthGuard)
 @Roles([Role.USER])
 @Controller('rooms')
+@ApiTags('rooms')
+@ApiBearerAuth("JWT")
 export class RoomController {
   constructor(private chatService: ChatService) {}
 
+
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ description: 'get all the singers-albums ' })
+  @ApiResponse({ description: 'Ok' })
+  @ApiBadRequestResponse({
+    description: 'bad Request with get clearFavoriteList FavoriteList ',
+  })
+  @ApiInternalServerErrorResponse({
+    description:
+      'data has been send but there is issiue in server so try later ',
+  })
   @Get()
   getAllRooms() {
     return this.chatService.getAllRooms();

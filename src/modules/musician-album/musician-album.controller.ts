@@ -6,6 +6,7 @@ import {
   ApiTags,
   ApiInternalServerErrorResponse,
   ApiParam,
+  ApiBearerAuth,
 } from '@nestjs/swagger';
 import {
   CreateMusicAlBoomsDto,
@@ -33,6 +34,10 @@ import { Roles } from '../../commons/decorators/roles.decorator';
 import { Role } from '../../commons/enums/index.Enum';
 
 @Controller('musicians-albums')
+@ApiBearerAuth("JWT")
+  @ApiTags('musicians-albums')
+
+
 export class MusicianAlbumController {
   constructor(private musicianAlbumService: MusicianAlbumService) {}
 
@@ -41,7 +46,7 @@ export class MusicianAlbumController {
    * @returns
    */
 
-  @ApiTags('musicians-albums')
+
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ description: 'get all the get musicians-albums ' })
   @ApiResponse({ description: 'Ok' })
@@ -63,7 +68,7 @@ export class MusicianAlbumController {
     return this.musicianAlbumService.getAllMusicianAlbums();
   }
 
-  @ApiTags('musicians-albums')
+
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ description: 'get all the get musicians-albums ' })
   @ApiResponse({ description: 'Ok' })
@@ -85,7 +90,7 @@ export class MusicianAlbumController {
     return this.musicianAlbumService.getMusicianAlbumById(id);
   }
 
-  @ApiTags('musicians-albums')
+
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ description: 'get all the get musicians-albums ' })
   @ApiResponse({ description: 'Ok' })
@@ -122,7 +127,7 @@ export class MusicianAlbumController {
       source);
   }
 
-  @ApiTags('musicians-albums')
+
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ description: 'get all the get musicians-albums ' })
   @ApiResponse({ description: 'Ok' })
@@ -153,7 +158,7 @@ export class MusicianAlbumController {
     return this.musicianAlbumService.updateMusicianAlbum({name,description,artist,type,musicianAlbumId:id},source);
   }
 
-  @ApiTags('musicians-albums')
+
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ description: 'get all the get musicians-albums ' })
   @ApiResponse({ description: 'Ok' })

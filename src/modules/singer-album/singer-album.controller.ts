@@ -29,14 +29,17 @@ import {
   ApiInternalServerErrorResponse,
   ApiParam,
   ApiBody,
+  ApiBearerAuth,
 } from '@nestjs/swagger';
 import { UpdateAlbumDto } from './dto/create-album.dto';
 
 @Controller('singers-albums')
+@ApiBearerAuth("JWT")
+@ApiTags('singers-albums')
+
 export class SingerAlbumController {
   constructor(private singerAlbumService: SingerAlbumService) {}
 
-  @ApiTags('singers-albums')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ description: 'get all the singers-albums ' })
   @ApiResponse({ description: 'Ok' })
@@ -52,7 +55,7 @@ export class SingerAlbumController {
     return this.singerAlbumService.getAllSingerAlbums();
   }
 
-  @ApiTags('singers-albums')
+ 
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ description: 'get all the singers-albums ' })
   @ApiResponse({ description: 'Ok' })
@@ -69,7 +72,7 @@ export class SingerAlbumController {
     return this.singerAlbumService.getSingerAlbumById(id);
   }
 
-  @ApiTags('singers-albums')
+ 
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ description: 'get all the singers-albums ' })
   @ApiResponse({ description: 'Ok' })
@@ -94,7 +97,7 @@ export class SingerAlbumController {
     return this.singerAlbumService.createNewSong(id, createNewSongDto, source);
   }
 
-  @ApiTags('singers-albums')
+ 
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ description: 'get all the singers-albums ' })
   @ApiResponse({ description: 'Ok' })
